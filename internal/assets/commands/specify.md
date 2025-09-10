@@ -3,6 +3,18 @@
 ## Summary
 Guide the user through a comprehensive spec-driven development workflow for feature requirements gathering and implementation planning using the specware tool.
 
+## Important Notes
+- Always use the specware tool to track state and create artifacts
+- Maintain one feature at a time in active development
+- Support stopping and resuming at any point in the workflow
+- Record all Q&A interactions in the appropriate q&a files
+- Follow the existing codebase patterns and conventions
+
+## Specware usage Guidance
+The specware tool is necessary to facilitate the basic operations of the workflow.
+
+If the specware tool is not avaialble, immediately stop and instruct the user to install the tool.
+
 ## Workflow
 
 ### Phase 1: Requirements Building
@@ -58,9 +70,3 @@ When the user is ready for implementation planning:
 - For requirements feedback: "I have feedback on the requirements doc we need to address. <feedback>"
 - To continue to implementation planning: "continue to the implementation planning phase"
 
-## Important Notes
-- Always use the specware tool to track state and create artifacts
-- Maintain one feature at a time in active development
-- Support stopping and resuming at any point in the workflow
-- Record all Q&A interactions in the appropriate q&a files
-- Follow the existing codebase patterns and conventions
