@@ -52,7 +52,7 @@ Throughout the following phases, the Claude Code command workflows instruct clau
 $ specware feature update-state example-spec "Requirements Q&A"
 ```
 
-The tool uses the `.spec/000-example-spec/.spec-status` file to track status.
+The tool uses the `.spec/000-example-spec/.spec-status.json` file to track status.
 
 ### Phase 0: Initialization
 User initiates the spec workflow in their repo using the tool. User is expected to specify a directory to inititialize.
@@ -67,7 +67,7 @@ The tool creates the necessary resources in the repo:
 .spec/
   README.md
   000-example-spec/
-    .spec-status
+    .spec-status.json
 ```
 
 Note that git ignores the .specware/.* and .spec/ files by default.
@@ -96,7 +96,7 @@ Claude command instructs claude to create the new feature spec dir and a copy of
 $ specware feature new-requirements community-page
 .spec/
   001-community-page/
-    .spec-status
+    .spec-status.json
     q&a-requirements.md
     requirements.md
 ```
@@ -136,7 +136,7 @@ Claude is instructed to use the tool to create the plan spec
 $ specware feature new-implementation-plan community-page
 .spec/
   001-community-page/
-    .spec-status
+    .spec-status.json
     implementation-plan.md
     requirements.md
     q&a-implementation-plan.md

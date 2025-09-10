@@ -1,6 +1,7 @@
 package spec_test
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -65,16 +66,20 @@ var _ = Describe("Spec", func() {
 			Expect(string(content)).To(ContainSubstring("Spec-driven Development"))
 		})
 
-		It("should create .spec-status file in example directory", func() {
+		It("should create .spec-status.json file in example directory", func() {
 			err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
-			statusPath := filepath.Join(tempDir, ".spec", "000-example-spec", ".spec-status")
+			statusPath := filepath.Join(tempDir, ".spec", "000-example-spec", ".spec-status.json")
 			Expect(statusPath).To(BeAnExistingFile())
 
 			content, err := os.ReadFile(statusPath)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(string(content)).To(ContainSubstring("status: initialized"))
+			
+			var status spec.FeatureStatus
+			err = json.Unmarshal(content, &status)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(status.CurrentStep).To(Equal("Not Started"))
 		})
 	})
 
@@ -241,6 +246,18 @@ var _ = Describe("Spec", func() {
 
 			qaPath := filepath.Join(featureDir, "q&a-requirements.md")
 			Expect(qaPath).To(BeAnExistingFile())
+
+			// Check that .spec-status.json was created with correct initial status
+			statusPath := filepath.Join(featureDir, ".spec-status.json")
+			Expect(statusPath).To(BeAnExistingFile())
+			
+			content, err := os.ReadFile(statusPath)
+			Expect(err).NotTo(HaveOccurred())
+			
+			var status spec.FeatureStatus
+			err = json.Unmarshal(content, &status)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(status.CurrentStep).To(Equal("requirements-gathering"))
 		})
 
 		It("should use sequential numbering for multiple features", func() {
@@ -360,6 +377,104 @@ var _ = Describe("Spec", func() {
 
 			err = spec.CreateNewImplementationPlan(tempDir, "invalid name")
 			Expect(err).To(HaveOccurred())
+		})
+	})
+
+	Describe("UpdateFeatureStatus", func() {
+		BeforeEach(func() {
+			// Initialize project and create a feature
+			err := spec.InitProject(tempDir)
+			Expect(err).NotTo(HaveOccurred())
+			err = spec.CreateNewRequirements(tempDir, "test-feature")
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("should update the status of an existing feature", func() {
+			err := spec.UpdateFeatureStatus(tempDir, "test-feature", "requirements-qa")
+			Expect(err).NotTo(HaveOccurred())
+
+			statusPath := filepath.Join(tempDir, ".spec", "001-test-feature", ".spec-status.json")
+			content, err := os.ReadFile(statusPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			var status spec.FeatureStatus
+			err = json.Unmarshal(content, &status)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(status.CurrentStep).To(Equal("requirements-qa"))
+		})
+
+		It("should create status file if it doesn't exist", func() {
+			// Remove the existing status file
+			statusPath := filepath.Join(tempDir, ".spec", "001-test-feature", ".spec-status.json")
+			err := os.Remove(statusPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Update status should create the file
+			err = spec.UpdateFeatureStatus(tempDir, "test-feature", "implementation-planning")
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(statusPath).To(BeAnExistingFile())
+			content, err := os.ReadFile(statusPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			var status spec.FeatureStatus
+			err = json.Unmarshal(content, &status)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(status.CurrentStep).To(Equal("implementation-planning"))
+		})
+
+		It("should fail if feature doesn't exist", func() {
+			err := spec.UpdateFeatureStatus(tempDir, "nonexistent-feature", "some-status")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("feature directory not found"))
+		})
+
+		It("should fail with invalid feature names", func() {
+			err := spec.UpdateFeatureStatus(tempDir, "", "some-status")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("cannot be empty"))
+
+			err = spec.UpdateFeatureStatus(tempDir, "invalid name", "some-status")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("can only contain letters, numbers, hyphens, and underscores"))
+		})
+
+		It("should fail if .spec directory doesn't exist", func() {
+			newTempDir, err := os.MkdirTemp("", "specware-no-spec")
+			Expect(err).NotTo(HaveOccurred())
+			defer os.RemoveAll(newTempDir)
+
+			err = spec.UpdateFeatureStatus(newTempDir, "test-feature", "some-status")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring(".spec directory not found"))
+		})
+
+		It("should accept any status value", func() {
+			customStatuses := []string{
+				"requirements-gathering",
+				"requirements-qa", 
+				"requirements-review",
+				"implementation-planning",
+				"implementation-qa",
+				"implementation-review",
+				"specification-complete",
+				"custom-status",
+				"another custom status with spaces",
+			}
+
+			for _, status := range customStatuses {
+				err := spec.UpdateFeatureStatus(tempDir, "test-feature", status)
+				Expect(err).NotTo(HaveOccurred())
+
+				statusPath := filepath.Join(tempDir, ".spec", "001-test-feature", ".spec-status.json")
+				content, err := os.ReadFile(statusPath)
+				Expect(err).NotTo(HaveOccurred())
+
+				var featureStatus spec.FeatureStatus
+				err = json.Unmarshal(content, &featureStatus)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(featureStatus.CurrentStep).To(Equal(status))
+			}
 		})
 	})
 })

@@ -71,9 +71,34 @@ The feature directory must already exist (created with new-requirements). This c
 var updateStateCmd = &cobra.Command{
 	Use:   "update-state <short-name> <status>",
 	Short: "Update the status of a feature specification",
+	Long: `Updates the status of a feature specification in the .spec-status.json file.
+
+The status value can be any string, but suggested values for use with the specify.md 
+Claude command include:
+- requirements-gathering
+- requirements-qa
+- requirements-review
+- implementation-planning
+- implementation-qa
+- implementation-review
+- specification-complete`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Not yet implemented")
+		shortName := args[0]
+		status := args[1]
+		
+		cwd, err := os.Getwd()
+		if err != nil {
+			fmt.Printf("Error getting current directory: %v\n", err)
+			os.Exit(1)
+		}
+
+		if err := spec.UpdateFeatureStatus(cwd, shortName, status); err != nil {
+			fmt.Printf("Error updating feature status: %v\n", err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("Updated status for feature '%s' to '%s'\n", shortName, status)
 	},
 }
 

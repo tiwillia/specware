@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
@@ -68,11 +69,17 @@ func InitProject(targetDir string) error {
 		return fmt.Errorf("failed to create example spec directory: %w", err)
 	}
 
-	// Create .spec-status file
-	statusPath := filepath.Join(exampleDir, ".spec-status")
-	statusContent := "status: initialized\ncreated: example\nphase: example\n"
-	if err := os.WriteFile(statusPath, []byte(statusContent), 0644); err != nil {
-		return fmt.Errorf("failed to create .spec-status file: %w", err)
+	// Create .spec-status.json file
+	statusPath := filepath.Join(exampleDir, ".spec-status.json")
+	statusData := FeatureStatus{
+		CurrentStep: "Not Started",
+	}
+	jsonData, err := json.MarshalIndent(statusData, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal status data: %w", err)
+	}
+	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
+		return fmt.Errorf("failed to create .spec-status.json file: %w", err)
 	}
 
 	return nil
@@ -217,6 +224,19 @@ func CreateNewRequirements(targetDir, shortName string) error {
 		return fmt.Errorf("failed to create q&a-requirements.md: %w", err)
 	}
 	
+	// Create .spec-status.json file
+	statusPath := filepath.Join(featureDir, ".spec-status.json")
+	statusData := FeatureStatus{
+		CurrentStep: "requirements-gathering",
+	}
+	jsonData, err := json.MarshalIndent(statusData, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal status data: %w", err)
+	}
+	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
+		return fmt.Errorf("failed to create .spec-status.json: %w", err)
+	}
+	
 	return nil
 }
 
@@ -283,4 +303,44 @@ func findFeatureDirectory(specDir, shortName string) (string, error) {
 	}
 	
 	return "", fmt.Errorf("feature directory not found for %s. Run 'specware feature new-requirements %s' first", shortName, shortName)
+}
+
+// FeatureStatus represents the status information stored in .spec-status.json
+type FeatureStatus struct {
+	CurrentStep string `json:"current-step"`
+}
+
+// UpdateFeatureStatus updates the status of a feature specification
+func UpdateFeatureStatus(targetDir, shortName, status string) error {
+	if err := ValidateFeatureName(shortName); err != nil {
+		return err
+	}
+	
+	specDir := filepath.Join(targetDir, ".spec")
+	if _, err := os.Stat(specDir); os.IsNotExist(err) {
+		return fmt.Errorf(".spec directory not found. Run 'specware init' first")
+	}
+	
+	// Find the feature directory
+	featureDir, err := findFeatureDirectory(specDir, shortName)
+	if err != nil {
+		return err
+	}
+	
+	// Update status file
+	statusPath := filepath.Join(featureDir, ".spec-status.json")
+	statusData := FeatureStatus{
+		CurrentStep: status,
+	}
+	
+	jsonData, err := json.MarshalIndent(statusData, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal status data: %w", err)
+	}
+	
+	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
+		return fmt.Errorf("failed to write status file: %w", err)
+	}
+	
+	return nil
 }
