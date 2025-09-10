@@ -75,13 +75,16 @@ var updateStateCmd = &cobra.Command{
 
 The status value can be any string, but suggested values for use with the specify.md 
 Claude command include:
-- requirements-gathering
-- requirements-qa
-- requirements-review
-- implementation-planning
-- implementation-qa
-- implementation-review
-- specification-complete`,
+- "Requirements Gathering"
+- "Requirements Context Gathering"
+- "Requirements Expert Q&A"
+- "Requirements Complete"
+- "Requirements Interactive Review"
+- "Implementation Planning"
+- "Implementation Plan Q&A"
+- "Implementation Plan Generated"
+- "Implementation Plan Interactive Review"
+- "Implementation Planning Complete"`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]

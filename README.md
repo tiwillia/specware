@@ -67,10 +67,13 @@ After initialization, Specware creates in your project:
 ## Status Tracking
 
 Features are tracked through `.spec-status.json` files within a feature spec directory with suggested workflow phases:
-- `requirements-gathering`
-- `requirements-qa` 
-- `requirements-review`
-- `implementation-planning`
-- `implementation-qa`
-- `implementation-review`
-- `specification-complete`
+- `"Requirements Gathering"`
+- `"Requirements Context Gathering"`
+- `"Requirements Expert Q&A"`
+- `"Requirements Complete"`
+- `"Requirements Interactive Review"`
+- `"Implementation Planning"`
+- `"Implementation Plan Q&A"`
+- `"Implementation Plan Generated"`
+- `"Implementation Plan Interactive Review"`
+- `"Implementation Planning Complete"`

@@ -61,13 +61,16 @@ The tool creates a standardized project structure:
 ## Status Management
 
 Features are tracked through `.spec-status.json` files with suggested statuses:
-- `requirements-gathering`
-- `requirements-qa` 
-- `requirements-review`
-- `implementation-planning`
-- `implementation-qa`
-- `implementation-review`
-- `specification-complete`
+- `"Requirements Gathering"`
+- `"Requirements Context Gathering"`
+- `"Requirements Expert Q&A"`
+- `"Requirements Complete"`
+- `"Requirements Interactive Review"`
+- `"Implementation Planning"`
+- `"Implementation Plan Q&A"`
+- `"Implementation Plan Generated"`
+- `"Implementation Plan Interactive Review"`
+- `"Implementation Planning Complete"`
 
 ## Testing
 
