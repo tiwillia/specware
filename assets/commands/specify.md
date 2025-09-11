@@ -67,8 +67,6 @@ If unsure, ask for clarification or request a feature name.
   - Questions about user interactions and workflows
   - Questions about similar features users currently use
   - Questions about data/content being worked with
-  - Questions about external integrations or third-party services
-  - Questions about performance or scale expectations
   - Write all questions to `context-requirements.md` with smart defaults
   - Ask questions one at a time proposing the question with a smart default option
 - Only after all questions are asked, record answers in `context-requirements.md` as received, not before.
@@ -84,6 +82,9 @@ If unsure, ask for clarification or request a feature name.
 - Use `specware feature update-state <short-name> "Requirements Expert Q&A"`
 - Now you are an expert on the codebase, a senior developer with the right knowledge.
 - Write the top 3-5 most important questions yes/no questions to `context-requirements.md`
+  - Questions about external integrations or third-party services
+  - Questions about access control
+  - Questions about performance or scale expectations
   - These questions should clarify expected behavior with a deep understanding of the code.
   - Ask questions one at a time proposing the question with a smart default option
 
@@ -100,7 +101,9 @@ If unsure, ask for clarification or request a feature name.
 - Use `specware feature update-state <short-name> "Requirements Interactive Review"`
 - For each section of the `requirements.md` document, perform the following interactive review steps:
   1. Generate a 1-3 sentence summary of the section
-  2. Display the section without modifications to the user and then the generated summary.
+  2. Display the section in two parts:
+    a) Show the exact section content from the file (verbatim, no modifications or paraphrasing)
+    b) Then show the generated summary as a separate block below the original content
   3. Ask the user for any changes or amendments.
   4. If the user provides changes or amendments, make the changes and make any additional changes needed to other sections of the document.
   5. Once the user is satisfied, proceed to the next section.
@@ -130,12 +133,26 @@ When the user is ready for implementation planning:
   - Questions about data model details and conventions
   - Questions about error handling and logging requirements
   - Questions about performance and security concerns
+  - Questions about testing requirements
+  - Write all questions to `context-implementation-plan.md` with smart defaults and example code snippets where necessary
+  - Ask questions one at a time proposing the question with a smart default option and examples
+- Only after all questions are asked, record answers in `context-implementation-plan.md` as received, not before.
+
+#### Step 4: Testing Q&A
+- Review what testing exists for similar features and determine what unit, integration, and e2e tests may be necessary for this feature.
+- Generate at least 2 of the most important yes/no questions to clarify testing requirements, considering:
+  - Questions about unit, integration, and e2e testing
+  - Questions about when to write which tests (Test Driven Development for example)
+  - Questions about how to run specific tests if required and unclear
   - Write all questions to `context-implementation-plan.md` with smart defaults and example code snippets where necessary
   - Ask questions one at a time proposing the question with a smart default option and examples
 - Only after all questions are asked, record answers in `context-implementation-plan.md` as received, not before.
 
 #### Step 5: Finalize Implementation Plan
 - Generate a comprehensive implementation plan, breaking out large operations and changes into smaller tasks
+- Be detailed in steps regarding testing:
+  - What tests specifically will be run?
+  - What output are you expecting?
 - Write the complete implementation plan to `implementation-plan.md`
 - Update status with `specware feature update-state <short-name> "Implementation Plan Generated"`
 
@@ -143,7 +160,9 @@ When the user is ready for implementation planning:
 - Use `specware feature update-state <short-name> "Implementation Plan Interactive Review"`
 - For each section or phase of the `implementation-plan.md` document, perform the following interactive review steps:
   1. Generate a 1-3 sentence summary of the section.
-  2. Display the section without modifications to the user and then the generated summary.
+  2. Display the section in two parts:
+    a) Show the exact section content from the file (verbatim, no modifications or paraphrasing)
+    b) Then show the generated summary as a separate block below the original content
   3. Ask the user for any changes or amendments.
   4. If the user provides changes or amendments, make the changes and make any additional changes needed to other sections of the document.
   5. Once the user is satisfied, proceed to the next section.
