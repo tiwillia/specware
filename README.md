@@ -104,7 +104,7 @@ Embedded templates used by Claude Code during specification generation:
 
 - **`requirements.md`** - Structure for feature requirements with sections for problem statement, solution overview, functional/technical requirements, acceptance criteria, and constraints
 - **`implementation-plan.md`** - Structure for technical plans with milestones, phases, tasks, code examples, and deployment considerations
-- **`q&a.md`** - Template for Q&A sessions used to create both `q&a-requirements.md` and `q&a-implementation-plan.md` files
+- **`context.md`** - Template for context gathering sessions used to create both `q&a-requirements.md` and `q&a-implementation-plan.md` files
 
 Templates can be localized to `.spec/templates/` for project-specific customization using `specware localize-templates`.
 

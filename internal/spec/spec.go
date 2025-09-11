@@ -217,16 +217,16 @@ func CreateNewRequirements(targetDir, shortName string) error {
 		return fmt.Errorf("failed to create requirements.md: %w", err)
 	}
 	
-	// Create Q&A file from template
-	qaTemplate, err := getTemplate(targetDir, "q&a.md")
+	// Create context file from template
+	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
-		return fmt.Errorf("failed to get q&a template: %w", err)
+		return fmt.Errorf("failed to get context template: %w", err)
 	}
 	
 	// Replace placeholder with appropriate title
-	qaContent := strings.Replace(string(qaTemplate), "[Feature Name]", "Requirements", 1)
-	qaPath := filepath.Join(featureDir, "q&a-requirements.md")
-	if err := os.WriteFile(qaPath, []byte(qaContent), 0644); err != nil {
+	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Requirements", 1)
+	contextPath := filepath.Join(featureDir, "q&a-requirements.md")
+	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
 		return fmt.Errorf("failed to create q&a-requirements.md: %w", err)
 	}
 	
@@ -279,16 +279,16 @@ func CreateNewImplementationPlan(targetDir, shortName string) error {
 		return fmt.Errorf("failed to create implementation-plan.md: %w", err)
 	}
 	
-	// Create Q&A file from template
-	qaTemplate, err := getTemplate(targetDir, "q&a.md")
+	// Create context file from template
+	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
-		return fmt.Errorf("failed to get q&a template: %w", err)
+		return fmt.Errorf("failed to get context template: %w", err)
 	}
 	
 	// Replace placeholder with appropriate title
-	qaContent := strings.Replace(string(qaTemplate), "[Feature Name]", "Implementation Plan", 1)
-	qaPath := filepath.Join(featureDir, "q&a-implementation-plan.md")
-	if err := os.WriteFile(qaPath, []byte(qaContent), 0644); err != nil {
+	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Implementation Plan", 1)
+	contextPath := filepath.Join(featureDir, "q&a-implementation-plan.md")
+	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
 		return fmt.Errorf("failed to create q&a-implementation-plan.md: %w", err)
 	}
 	

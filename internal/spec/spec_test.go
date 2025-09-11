@@ -102,8 +102,8 @@ var _ = Describe("Spec", func() {
 			planPath := filepath.Join(tempDir, ".spec", "templates", "implementation-plan.md")
 			Expect(planPath).To(BeAnExistingFile())
 
-			qaPath := filepath.Join(tempDir, ".spec", "templates", "q&a.md")
-			Expect(qaPath).To(BeAnExistingFile())
+			contextPath := filepath.Join(tempDir, ".spec", "templates", "context.md")
+			Expect(contextPath).To(BeAnExistingFile())
 		})
 
 		It("should handle existing template files", func() {
@@ -314,16 +314,16 @@ var _ = Describe("Spec", func() {
 			Expect(err.Error()).To(ContainSubstring(".spec directory not found"))
 		})
 
-		It("should create Q&A file from template with correct title", func() {
+		It("should create context file from template with correct title", func() {
 			err := spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
-			qaPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-requirements.md")
-			content, err := os.ReadFile(qaPath)
+			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-requirements.md")
+			content, err := os.ReadFile(contextPath)
 			Expect(err).NotTo(HaveOccurred())
 			
 			// Should have the template structure with Requirements title
-			Expect(string(content)).To(ContainSubstring("# Q&A: Requirements"))
+			Expect(string(content)).To(ContainSubstring("# Context: Requirements"))
 			Expect(string(content)).To(ContainSubstring("## Questions & Answers"))
 			Expect(string(content)).To(ContainSubstring("## Context Gathering Results"))
 		})
@@ -396,16 +396,16 @@ var _ = Describe("Spec", func() {
 			Expect(err).To(HaveOccurred())
 		})
 
-		It("should create Q&A file from template with correct title", func() {
+		It("should create context file from template with correct title", func() {
 			err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
-			qaPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-implementation-plan.md")
-			content, err := os.ReadFile(qaPath)
+			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-implementation-plan.md")
+			content, err := os.ReadFile(contextPath)
 			Expect(err).NotTo(HaveOccurred())
 			
 			// Should have the template structure with Implementation Plan title
-			Expect(string(content)).To(ContainSubstring("# Q&A: Implementation Plan"))
+			Expect(string(content)).To(ContainSubstring("# Context: Implementation Plan"))
 			Expect(string(content)).To(ContainSubstring("## Questions & Answers"))
 			Expect(string(content)).To(ContainSubstring("## Context Gathering Results"))
 		})
