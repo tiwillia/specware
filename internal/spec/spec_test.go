@@ -85,7 +85,7 @@ var _ = Describe("Spec", func() {
 
 	Describe("LocalizeTemplates", func() {
 		It("should create templates directory", func() {
-			err := spec.LocalizeTemplates(tempDir)
+			_, err := spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			templatesDir := filepath.Join(tempDir, ".spec", "templates")
@@ -93,7 +93,7 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should copy template files", func() {
-			err := spec.LocalizeTemplates(tempDir)
+			_, err := spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			requirementsPath := filepath.Join(tempDir, ".spec", "templates", "requirements.md")
@@ -108,7 +108,7 @@ var _ = Describe("Spec", func() {
 
 		It("should handle existing template files", func() {
 			// First localization
-			err := spec.LocalizeTemplates(tempDir)
+			_, err := spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			requirementsPath := filepath.Join(tempDir, ".spec", "templates", "requirements.md")
@@ -119,7 +119,7 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			// Second localization should overwrite
-			err = spec.LocalizeTemplates(tempDir)
+			_, err = spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			// File should exist and have been overwritten
@@ -134,7 +134,7 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 			defer os.RemoveAll(newTempDir)
 
-			err = spec.LocalizeTemplates(newTempDir)
+			_, err = spec.LocalizeTemplates(newTempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			templatesDir := filepath.Join(newTempDir, ".spec", "templates")
@@ -158,7 +158,7 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 			defer os.Chmod(roDir, 0755) // restore permissions for cleanup
 
-			err = spec.LocalizeTemplates(roDir)
+			_, err = spec.LocalizeTemplates(roDir)
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("failed to create templates directory"))
 		})
@@ -238,7 +238,7 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should create a new feature requirements directory", func() {
-			err := spec.CreateNewRequirements(tempDir, "test-feature")
+			_, err := spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			featureDir := filepath.Join(tempDir, ".spec", "001-test-feature")
@@ -264,10 +264,10 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should use sequential numbering for multiple features", func() {
-			err := spec.CreateNewRequirements(tempDir, "first-feature")
+			_, err := spec.CreateNewRequirements(tempDir, "first-feature")
 			Expect(err).NotTo(HaveOccurred())
 
-			err = spec.CreateNewRequirements(tempDir, "second-feature")
+			_, err = spec.CreateNewRequirements(tempDir, "second-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(filepath.Join(tempDir, ".spec", "001-first-feature")).To(BeADirectory())
@@ -276,7 +276,7 @@ var _ = Describe("Spec", func() {
 
 		It("should prefer localized templates when available", func() {
 			// First localize templates
-			err := spec.LocalizeTemplates(tempDir)
+			_, err := spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Modify the localized template
@@ -286,7 +286,7 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			// Create new requirements
-			err = spec.CreateNewRequirements(tempDir, "test-feature")
+			_, err = spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			// Check that the customized template was used
@@ -297,10 +297,10 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should fail with invalid feature names", func() {
-			err := spec.CreateNewRequirements(tempDir, "")
+			_, err := spec.CreateNewRequirements(tempDir, "")
 			Expect(err).To(HaveOccurred())
 
-			err = spec.CreateNewRequirements(tempDir, "invalid name")
+			_, err = spec.CreateNewRequirements(tempDir, "invalid name")
 			Expect(err).To(HaveOccurred())
 		})
 
@@ -309,13 +309,13 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 			defer os.RemoveAll(newTempDir)
 
-			err = spec.CreateNewRequirements(newTempDir, "test-feature")
+			_, err = spec.CreateNewRequirements(newTempDir, "test-feature")
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring(".spec directory not found"))
 		})
 
 		It("should create context file from template with correct title", func() {
-			err := spec.CreateNewRequirements(tempDir, "test-feature")
+			_, err := spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "context-requirements.md")
@@ -334,12 +334,12 @@ var _ = Describe("Spec", func() {
 			// Initialize project and create a feature
 			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
-			err = spec.CreateNewRequirements(tempDir, "test-feature")
+			_, err = spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should create implementation plan for existing feature", func() {
-			err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
+			_, err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			featureDir := filepath.Join(tempDir, ".spec", "001-test-feature")
@@ -351,24 +351,24 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should fail if feature doesn't exist", func() {
-			err := spec.CreateNewImplementationPlan(tempDir, "nonexistent-feature")
+			_, err := spec.CreateNewImplementationPlan(tempDir, "nonexistent-feature")
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("feature directory not found"))
 		})
 
 		It("should fail if implementation plan already exists", func() {
-			err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
+			_, err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			// Try to create again
-			err = spec.CreateNewImplementationPlan(tempDir, "test-feature")
+			_, err = spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).To(HaveOccurred())
 			Expect(err.Error()).To(ContainSubstring("implementation plan already exists"))
 		})
 
 		It("should use localized templates when available", func() {
 			// First localize templates
-			err := spec.LocalizeTemplates(tempDir)
+			_, err := spec.LocalizeTemplates(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Modify the localized template
@@ -378,7 +378,7 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			// Create implementation plan
-			err = spec.CreateNewImplementationPlan(tempDir, "test-feature")
+			_, err = spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			// Check that the customized template was used
@@ -389,15 +389,15 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should fail with invalid feature names", func() {
-			err := spec.CreateNewImplementationPlan(tempDir, "")
+			_, err := spec.CreateNewImplementationPlan(tempDir, "")
 			Expect(err).To(HaveOccurred())
 
-			err = spec.CreateNewImplementationPlan(tempDir, "invalid name")
+			_, err = spec.CreateNewImplementationPlan(tempDir, "invalid name")
 			Expect(err).To(HaveOccurred())
 		})
 
 		It("should create context file from template with correct title", func() {
-			err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
+			_, err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
 			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "context-implementation-plan.md")
@@ -416,7 +416,7 @@ var _ = Describe("Spec", func() {
 			// Initialize project and create a feature
 			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
-			err = spec.CreateNewRequirements(tempDir, "test-feature")
+			_, err = spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 		})
 

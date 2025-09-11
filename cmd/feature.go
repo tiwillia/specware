@@ -32,12 +32,17 @@ sequential number starting from 001. The directory will contain:
 			os.Exit(1)
 		}
 
-		if err := spec.CreateNewRequirements(cwd, shortName); err != nil {
+		createdFiles, err := spec.CreateNewRequirements(cwd, shortName)
+		if err != nil {
 			fmt.Printf("Error creating feature requirements: %v\n", err)
 			os.Exit(1)
 		}
 
 		fmt.Printf("Created feature requirements for '%s'\n", shortName)
+		fmt.Println("\nCreated files:")
+		for _, file := range createdFiles {
+			fmt.Printf("  %s\n", file)
+		}
 	},
 }
 
@@ -59,12 +64,17 @@ The feature directory must already exist (created with new-requirements). This c
 			os.Exit(1)
 		}
 
-		if err := spec.CreateNewImplementationPlan(cwd, shortName); err != nil {
+		createdFiles, err := spec.CreateNewImplementationPlan(cwd, shortName)
+		if err != nil {
 			fmt.Printf("Error creating implementation plan: %v\n", err)
 			os.Exit(1)
 		}
 
 		fmt.Printf("Created implementation plan for feature '%s'\n", shortName)
+		fmt.Println("\nCreated files:")
+		for _, file := range createdFiles {
+			fmt.Printf("  %s\n", file)
+		}
 	},
 }
 

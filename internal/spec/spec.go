@@ -90,10 +90,11 @@ func InitProject(targetDir string) ([]string, error) {
 }
 
 // LocalizeTemplates copies embedded templates to project .spec/templates directory
-func LocalizeTemplates(targetDir string) error {
+func LocalizeTemplates(targetDir string) ([]string, error) {
+	var createdFiles []string
 	templatesDir := filepath.Join(targetDir, ".spec", "templates")
 	if err := os.MkdirAll(templatesDir, 0755); err != nil {
-		return fmt.Errorf("failed to create templates directory: %w", err)
+		return nil, fmt.Errorf("failed to create templates directory: %w", err)
 	}
 
 	// Copy templates from embedded assets
@@ -121,10 +122,14 @@ func LocalizeTemplates(targetDir string) error {
 			fmt.Printf("Warning: Template file %s already exists, overwriting\n", relPath)
 		}
 		
+		createdFiles = append(createdFiles, filepath.Join(".spec", "templates", relPath))
 		return os.WriteFile(targetPath, content, 0644)
 	})
 
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return createdFiles, nil
 }
 
 // GetNextFeatureNumber returns the next available feature number
@@ -187,116 +192,125 @@ func getTemplate(targetDir, templateName string) ([]byte, error) {
 }
 
 // CreateNewRequirements creates a new feature requirements specification
-func CreateNewRequirements(targetDir, shortName string) error {
+func CreateNewRequirements(targetDir, shortName string) ([]string, error) {
+	var createdFiles []string
 	if err := ValidateFeatureName(shortName); err != nil {
-		return err
+		return nil, err
 	}
 	
 	specDir := filepath.Join(targetDir, ".spec")
 	if _, err := os.Stat(specDir); os.IsNotExist(err) {
-		return fmt.Errorf(".spec directory not found. Run 'specware init' first")
+		return nil, fmt.Errorf(".spec directory not found. Run 'specware init' first")
 	}
 	
 	// Get next feature number
 	featureNum, err := GetNextFeatureNumber(specDir)
 	if err != nil {
-		return fmt.Errorf("failed to get next feature number: %w", err)
+		return nil, fmt.Errorf("failed to get next feature number: %w", err)
 	}
 	
 	// Create feature directory
 	featureName := fmt.Sprintf("%03d-%s", featureNum, shortName)
 	featureDir := filepath.Join(specDir, featureName)
 	if err := os.MkdirAll(featureDir, 0755); err != nil {
-		return fmt.Errorf("failed to create feature directory: %w", err)
+		return nil, fmt.Errorf("failed to create feature directory: %w", err)
 	}
 	
 	// Copy requirements template
 	requirementsContent, err := getTemplate(targetDir, "requirements.md")
 	if err != nil {
-		return fmt.Errorf("failed to get requirements template: %w", err)
+		return nil, fmt.Errorf("failed to get requirements template: %w", err)
 	}
 	
 	requirementsPath := filepath.Join(featureDir, "requirements.md")
+	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "requirements.md"))
 	if err := os.WriteFile(requirementsPath, requirementsContent, 0644); err != nil {
-		return fmt.Errorf("failed to create requirements.md: %w", err)
+		return nil, fmt.Errorf("failed to create requirements.md: %w", err)
 	}
 	
 	// Create context file from template
 	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
-		return fmt.Errorf("failed to get context template: %w", err)
+		return nil, fmt.Errorf("failed to get context template: %w", err)
 	}
 	
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Requirements", 1)
 	contextPath := filepath.Join(featureDir, "context-requirements.md")
+	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "context-requirements.md"))
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
-		return fmt.Errorf("failed to create context-requirements.md: %w", err)
+		return nil, fmt.Errorf("failed to create context-requirements.md: %w", err)
 	}
 	
 	// Create .spec-status.json file
 	statusPath := filepath.Join(featureDir, ".spec-status.json")
+	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, ".spec-status.json"))
 	statusData := FeatureStatus{
 		CurrentStep: "requirements-gathering",
 	}
 	jsonData, err := json.MarshalIndent(statusData, "", "  ")
 	if err != nil {
-		return fmt.Errorf("failed to marshal status data: %w", err)
+		return nil, fmt.Errorf("failed to marshal status data: %w", err)
 	}
 	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
-		return fmt.Errorf("failed to create .spec-status.json: %w", err)
+		return nil, fmt.Errorf("failed to create .spec-status.json: %w", err)
 	}
 	
-	return nil
+	return createdFiles, nil
 }
 
 // CreateNewImplementationPlan creates an implementation plan for an existing feature
-func CreateNewImplementationPlan(targetDir, shortName string) error {
+func CreateNewImplementationPlan(targetDir, shortName string) ([]string, error) {
+	var createdFiles []string
 	if err := ValidateFeatureName(shortName); err != nil {
-		return err
+		return nil, err
 	}
 	
 	specDir := filepath.Join(targetDir, ".spec")
 	if _, err := os.Stat(specDir); os.IsNotExist(err) {
-		return fmt.Errorf(".spec directory not found. Run 'specware init' first")
+		return nil, fmt.Errorf(".spec directory not found. Run 'specware init' first")
 	}
 	
 	// Find the feature directory
 	featureDir, err := findFeatureDirectory(specDir, shortName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	
 	// Check if implementation plan already exists
 	planPath := filepath.Join(featureDir, "implementation-plan.md")
 	if _, err := os.Stat(planPath); err == nil {
-		return fmt.Errorf("implementation plan already exists for feature %s", shortName)
+		return nil, fmt.Errorf("implementation plan already exists for feature %s", shortName)
 	}
 	
 	// Copy implementation plan template
 	planContent, err := getTemplate(targetDir, "implementation-plan.md")
 	if err != nil {
-		return fmt.Errorf("failed to get implementation plan template: %w", err)
+		return nil, fmt.Errorf("failed to get implementation plan template: %w", err)
 	}
 	
+	// Extract feature name from directory path for relative path
+	featureName := filepath.Base(featureDir)
+	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "implementation-plan.md"))
 	if err := os.WriteFile(planPath, planContent, 0644); err != nil {
-		return fmt.Errorf("failed to create implementation-plan.md: %w", err)
+		return nil, fmt.Errorf("failed to create implementation-plan.md: %w", err)
 	}
 	
 	// Create context file from template
 	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
-		return fmt.Errorf("failed to get context template: %w", err)
+		return nil, fmt.Errorf("failed to get context template: %w", err)
 	}
 	
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Implementation Plan", 1)
 	contextPath := filepath.Join(featureDir, "context-implementation-plan.md")
+	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "context-implementation-plan.md"))
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
-		return fmt.Errorf("failed to create context-implementation-plan.md: %w", err)
+		return nil, fmt.Errorf("failed to create context-implementation-plan.md: %w", err)
 	}
 	
-	return nil
+	return createdFiles, nil
 }
 
 // findFeatureDirectory finds a feature directory by short name

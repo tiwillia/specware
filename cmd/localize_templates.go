@@ -21,11 +21,16 @@ This allows you to modify templates locally for your project without affecting t
 			os.Exit(1)
 		}
 
-		if err := spec.LocalizeTemplates(cwd); err != nil {
+		createdFiles, err := spec.LocalizeTemplates(cwd)
+		if err != nil {
 			fmt.Printf("Error localizing templates: %v\n", err)
 			os.Exit(1)
 		}
 
 		fmt.Println("Templates localized to .spec/templates/")
+		fmt.Println("\nCreated files:")
+		for _, file := range createdFiles {
+			fmt.Printf("  %s\n", file)
+		}
 	},
 }
