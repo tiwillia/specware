@@ -217,8 +217,14 @@ func CreateNewRequirements(targetDir, shortName string) error {
 		return fmt.Errorf("failed to create requirements.md: %w", err)
 	}
 	
-	// Create Q&A file
-	qaContent := "# Q&A Session - Requirements\n\nThis file tracks questions and answers during the requirements specification process.\n\n## Questions and Answers\n\n<!-- Add Q&A entries here -->\n"
+	// Create Q&A file from template
+	qaTemplate, err := getTemplate(targetDir, "q&a.md")
+	if err != nil {
+		return fmt.Errorf("failed to get q&a template: %w", err)
+	}
+	
+	// Replace placeholder with appropriate title
+	qaContent := strings.Replace(string(qaTemplate), "[Feature Name]", "Requirements", 1)
 	qaPath := filepath.Join(featureDir, "q&a-requirements.md")
 	if err := os.WriteFile(qaPath, []byte(qaContent), 0644); err != nil {
 		return fmt.Errorf("failed to create q&a-requirements.md: %w", err)
@@ -273,8 +279,14 @@ func CreateNewImplementationPlan(targetDir, shortName string) error {
 		return fmt.Errorf("failed to create implementation-plan.md: %w", err)
 	}
 	
-	// Create Q&A file
-	qaContent := "# Q&A Session - Implementation Plan\n\nThis file tracks questions and answers during the implementation planning process.\n\n## Questions and Answers\n\n<!-- Add Q&A entries here -->\n"
+	// Create Q&A file from template
+	qaTemplate, err := getTemplate(targetDir, "q&a.md")
+	if err != nil {
+		return fmt.Errorf("failed to get q&a template: %w", err)
+	}
+	
+	// Replace placeholder with appropriate title
+	qaContent := strings.Replace(string(qaTemplate), "[Feature Name]", "Implementation Plan", 1)
 	qaPath := filepath.Join(featureDir, "q&a-implementation-plan.md")
 	if err := os.WriteFile(qaPath, []byte(qaContent), 0644); err != nil {
 		return fmt.Errorf("failed to create q&a-implementation-plan.md: %w", err)

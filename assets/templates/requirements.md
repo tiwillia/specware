@@ -21,13 +21,3 @@ Technical or business limitations that affect the implementation.
 ### Dependencies
 External dependencies, integrations, or prerequisites needed.
 
-## Context
-
-### Questions & Answers
-Questions and provided answers
-
-#### Q1: Example question?
-**Answer:** Yes, this is the exact answer provided from the user.
-
-### Context Gathering Results
-Collection of any additional detail needed to inform requirements.
