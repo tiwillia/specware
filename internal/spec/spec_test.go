@@ -247,8 +247,8 @@ var _ = Describe("Spec", func() {
 			requirementsPath := filepath.Join(featureDir, "requirements.md")
 			Expect(requirementsPath).To(BeAnExistingFile())
 
-			qaPath := filepath.Join(featureDir, "q&a-requirements.md")
-			Expect(qaPath).To(BeAnExistingFile())
+			contextPath := filepath.Join(featureDir, "context-requirements.md")
+			Expect(contextPath).To(BeAnExistingFile())
 
 			// Check that .spec-status.json was created with correct initial status
 			statusPath := filepath.Join(featureDir, ".spec-status.json")
@@ -318,7 +318,7 @@ var _ = Describe("Spec", func() {
 			err := spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
-			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-requirements.md")
+			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "context-requirements.md")
 			content, err := os.ReadFile(contextPath)
 			Expect(err).NotTo(HaveOccurred())
 			
@@ -346,8 +346,8 @@ var _ = Describe("Spec", func() {
 			planPath := filepath.Join(featureDir, "implementation-plan.md")
 			Expect(planPath).To(BeAnExistingFile())
 
-			qaPath := filepath.Join(featureDir, "q&a-implementation-plan.md")
-			Expect(qaPath).To(BeAnExistingFile())
+			contextPath := filepath.Join(featureDir, "context-implementation-plan.md")
+			Expect(contextPath).To(BeAnExistingFile())
 		})
 
 		It("should fail if feature doesn't exist", func() {
@@ -400,7 +400,7 @@ var _ = Describe("Spec", func() {
 			err := spec.CreateNewImplementationPlan(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
 
-			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "q&a-implementation-plan.md")
+			contextPath := filepath.Join(tempDir, ".spec", "001-test-feature", "context-implementation-plan.md")
 			content, err := os.ReadFile(contextPath)
 			Expect(err).NotTo(HaveOccurred())
 			

@@ -225,9 +225,9 @@ func CreateNewRequirements(targetDir, shortName string) error {
 	
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Requirements", 1)
-	contextPath := filepath.Join(featureDir, "q&a-requirements.md")
+	contextPath := filepath.Join(featureDir, "context-requirements.md")
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
-		return fmt.Errorf("failed to create q&a-requirements.md: %w", err)
+		return fmt.Errorf("failed to create context-requirements.md: %w", err)
 	}
 	
 	// Create .spec-status.json file
@@ -287,9 +287,9 @@ func CreateNewImplementationPlan(targetDir, shortName string) error {
 	
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Implementation Plan", 1)
-	contextPath := filepath.Join(featureDir, "q&a-implementation-plan.md")
+	contextPath := filepath.Join(featureDir, "context-implementation-plan.md")
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
-		return fmt.Errorf("failed to create q&a-implementation-plan.md: %w", err)
+		return fmt.Errorf("failed to create context-implementation-plan.md: %w", err)
 	}
 	
 	return nil

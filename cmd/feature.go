@@ -21,7 +21,7 @@ var newRequirementsCmd = &cobra.Command{
 This command creates a directory with the pattern XXX-<short-name> where XXX is a 
 sequential number starting from 001. The directory will contain:
 - requirements.md (copied from localized or embedded template)
-- q&a-requirements.md (for tracking Q&A sessions)`,
+- context-requirements.md (for tracking Q&A sessions and context gathering)`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]
@@ -48,7 +48,7 @@ var newImplementationPlanCmd = &cobra.Command{
 
 The feature directory must already exist (created with new-requirements). This command adds:
 - implementation-plan.md (copied from localized or embedded template) 
-- q&a-implementation-plan.md (for tracking implementation Q&A sessions)`,
+- context-implementation-plan.md (for tracking implementation Q&A sessions and context gathering)`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]

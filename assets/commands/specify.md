@@ -61,7 +61,7 @@ If unsure, ask for clarification or request a feature name.
 #### Step 2: Requirements Gathering
 - Use `specware feature update-state <short-name> "Requirements Gathering"`
 - Fill in the basic sections and metadata of the requirements spec
-- Create initial content in both `requirements.md` and `q&a-requirements.md`
+- Create initial content in both `requirements.md` and `context-requirements.md`
 - Generate the five most important yes/no questions to understand the problem space:
   - Questions informed by codebase structure
   - Questions about user interactions and workflows
@@ -69,21 +69,21 @@ If unsure, ask for clarification or request a feature name.
   - Questions about data/content being worked with
   - Questions about external integrations or third-party services
   - Questions about performance or scale expectations
-  - Write all questions to `q&a-requirements.md` with smart defaults
+  - Write all questions to `context-requirements.md` with smart defaults
   - Ask questions one at a time proposing the question with a smart default option
-- Only after all questions are asked, record answers in `q&a-requirements.md` as received, not before.
+- Only after all questions are asked, record answers in `context-requirements.md` as received, not before.
 
 #### Step 3: Context Gathering
 - Use `specware feature update-state <short-name> "Requirements Context Gathering"`
 - Research the codebase to become an "expert" on the relevant topics
 - Deep dive into existing similar practices, patterns, and features
 - Use web searches for best practices or library documentation
-- Document findings in `q&a-requirements.md`
+- Document findings in `context-requirements.md`
 
 #### Step 4: Expert Requirements Questions
 - Use `specware feature update-state <short-name> "Requirements Expert Q&A"`
 - Now you are an expert on the codebase, a senior developer with the right knowledge.
-- Write the top 3-5 most important questions yes/no questions to `q&a-requirements.md`
+- Write the top 3-5 most important questions yes/no questions to `context-requirements.md`
   - These questions should clarify expected behavior with a deep understanding of the code.
   - Ask questions one at a time proposing the question with a smart default option
 
@@ -120,7 +120,7 @@ When the user is ready for implementation planning:
 - Review the existing code for patterns, best practices, and similar features to ensure existing patterns are followed
 - Check for and understand CONTRIBUTING.md or similar contribution documentation
 - Review any existing code style guidelines
-- Record your findings in `q&a-implementation-plan.md`
+- Record your findings in `context-implementation-plan.md`
 
 #### Step 3: Implementation Plan Q&A
 - Use `specware feature update-state <short-name> "Implementation Plan Q&A"`
@@ -130,9 +130,9 @@ When the user is ready for implementation planning:
   - Questions about data model details and conventions
   - Questions about error handling and logging requirements
   - Questions about performance and security concerns
-  - Write all questions to `q&a-implementation-plan.md` with smart defaults and example code snippets where necessary
+  - Write all questions to `context-implementation-plan.md` with smart defaults and example code snippets where necessary
   - Ask questions one at a time proposing the question with a smart default option and examples
-- Only after all questions are asked, record answers in `q&a-implementation-plan.md` as received, not before.
+- Only after all questions are asked, record answers in `context-implementation-plan.md` as received, not before.
 
 #### Step 5: Finalize Implementation Plan
 - Generate a comprehensive implementation plan, breaking out large operations and changes into smaller tasks
@@ -149,7 +149,7 @@ When the user is ready for implementation planning:
   5. Once the user is satisfied, proceed to the next section.
 - Once all sections are approved, use `specware feature update-state <short-name> "Implementation Planning Complete"`
 
-## Question Formats:
+## Question format when displayed to user:
 
 ### Discovery Questions:
 ```
