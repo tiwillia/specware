@@ -26,7 +26,7 @@ var _ = Describe("Spec", func() {
 
 	Describe("InitProject", func() {
 		It("should create the necessary directory structure", func() {
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			// Check .claude/commands directory exists
@@ -43,7 +43,7 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should copy the specify command file", func() {
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			specifyPath := filepath.Join(tempDir, ".claude", "commands", "specify.md")
@@ -55,7 +55,7 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should create .spec/README.md", func() {
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			readmePath := filepath.Join(tempDir, ".spec", "README.md")
@@ -67,7 +67,7 @@ var _ = Describe("Spec", func() {
 		})
 
 		It("should create .spec-status.json file in example directory", func() {
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 
 			statusPath := filepath.Join(tempDir, ".spec", "000-example-spec", ".spec-status.json")
@@ -233,7 +233,7 @@ var _ = Describe("Spec", func() {
 	Describe("CreateNewRequirements", func() {
 		BeforeEach(func() {
 			// Initialize project structure
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -332,7 +332,7 @@ var _ = Describe("Spec", func() {
 	Describe("CreateNewImplementationPlan", func() {
 		BeforeEach(func() {
 			// Initialize project and create a feature
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 			err = spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())
@@ -414,7 +414,7 @@ var _ = Describe("Spec", func() {
 	Describe("UpdateFeatureStatus", func() {
 		BeforeEach(func() {
 			// Initialize project and create a feature
-			err := spec.InitProject(tempDir)
+			_, err := spec.InitProject(tempDir)
 			Expect(err).NotTo(HaveOccurred())
 			err = spec.CreateNewRequirements(tempDir, "test-feature")
 			Expect(err).NotTo(HaveOccurred())

@@ -14,17 +14,18 @@ import (
 )
 
 // InitProject initializes a project with spec-driven workflow support
-func InitProject(targetDir string) error {
+func InitProject(targetDir string) ([]string, error) {
+	var createdFiles []string
 	// Create .claude/commands directory
 	claudeDir := filepath.Join(targetDir, ".claude", "commands")
 	if err := os.MkdirAll(claudeDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .claude/commands directory: %w", err)
+		return nil, fmt.Errorf("failed to create .claude/commands directory: %w", err)
 	}
 
 	// Create .spec directory
 	specDir := filepath.Join(targetDir, ".spec")
 	if err := os.MkdirAll(specDir, 0755); err != nil {
-		return fmt.Errorf("failed to create .spec directory: %w", err)
+		return nil, fmt.Errorf("failed to create .spec directory: %w", err)
 	}
 
 	// Copy commands from embedded assets
@@ -46,43 +47,46 @@ func InitProject(targetDir string) error {
 		// Write to target directory
 		relPath := strings.TrimPrefix(path, "commands/")
 		targetPath := filepath.Join(claudeDir, relPath)
+		createdFiles = append(createdFiles, filepath.Join(".claude", "commands", relPath))
 		return os.WriteFile(targetPath, content, 0644)
 	})
 	if err != nil {
-		return fmt.Errorf("failed to copy commands: %w", err)
+		return nil, fmt.Errorf("failed to copy commands: %w", err)
 	}
 
 	// Create .spec/README.md
 	specReadmeContent, err := assets.GetSpecReadme()
 	if err != nil {
-		return fmt.Errorf("failed to get spec README content: %w", err)
+		return nil, fmt.Errorf("failed to get spec README content: %w", err)
 	}
 	
 	readmePath := filepath.Join(specDir, "README.md")
+	createdFiles = append(createdFiles, ".spec/README.md")
 	if err := os.WriteFile(readmePath, specReadmeContent, 0644); err != nil {
-		return fmt.Errorf("failed to create .spec/README.md: %w", err)
+		return nil, fmt.Errorf("failed to create .spec/README.md: %w", err)
 	}
 
 	// Create example spec directory
 	exampleDir := filepath.Join(specDir, "000-example-spec")
 	if err := os.MkdirAll(exampleDir, 0755); err != nil {
-		return fmt.Errorf("failed to create example spec directory: %w", err)
+		return nil, fmt.Errorf("failed to create example spec directory: %w", err)
 	}
 
 	// Create .spec-status.json file
 	statusPath := filepath.Join(exampleDir, ".spec-status.json")
+	createdFiles = append(createdFiles, ".spec/000-example-spec/.spec-status.json")
 	statusData := FeatureStatus{
 		CurrentStep: "Not Started",
 	}
 	jsonData, err := json.MarshalIndent(statusData, "", "  ")
 	if err != nil {
-		return fmt.Errorf("failed to marshal status data: %w", err)
+		return nil, fmt.Errorf("failed to marshal status data: %w", err)
 	}
 	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
-		return fmt.Errorf("failed to create .spec-status.json file: %w", err)
+		return nil, fmt.Errorf("failed to create .spec-status.json file: %w", err)
 	}
 
-	return nil
+	return createdFiles, nil
 }
 
 // LocalizeTemplates copies embedded templates to project .spec/templates directory
