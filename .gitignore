@@ -1,1 +1,5 @@
+# Ignore the built binary
 specware
+
+# There is nothing outside of the specware specify command to commit yet
+.claude/

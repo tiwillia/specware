@@ -13,7 +13,8 @@ Specware is a CLI tool that enables spec-driven development workflows for Claude
 make build
 
 # Run tests (uses Ginkgo/Gomega framework)
-go test ./...
+make test
+# or directly: go test ./...
 
 # Run tests for specific package
 go test ./internal/spec
@@ -40,7 +41,7 @@ The project follows a standard Go CLI structure using Cobra for command handling
   - Manages embedded asset copying (commands and templates)
   - Provides feature numbering and directory structure management
   - Implements status tracking through `.spec-status.json` files
-- **`internal/assets/`** - Embedded file system containing templates and commands
+- **`assets/`** - Embedded file system containing templates and commands
 
 ## Key Functionality
 

@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"specware/internal/assets"
+	"specware/assets"
 )
 
 // InitProject initializes a project with spec-driven workflow support
