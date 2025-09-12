@@ -58,7 +58,7 @@ Guide the user through generating a requirements specification.
 - Offer three options:
   1. Interactive review session of the requirements documentation
   2. Stop here for asynchronous review and feedback, the user being expected to review the requirements document.
-  3. Move to implementation planning phase, skipping review (not reccomended).
+  3. Move to the next phase, skipping review (not reccomended).
 
 #### Step 6: (optional) Interactive review session
 - Use `specware feature update-state <short-name> "Requirements Interactive Review"`
