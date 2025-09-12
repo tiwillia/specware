@@ -62,6 +62,9 @@ After initialization, Specware creates in your project:
 .claude/
   commands/
     specify.md                 # Claude Code workflow command
+  agents/
+    scope-creep-craig.md       # Agent for scope creep detection
+    tech-spec-beck.md          # Agent for technical documentation
 .spec/
   README.md                    # Spec workflow documentation  
 ```
@@ -79,7 +82,7 @@ These commands are intended to be run by Claude Code to facilitate feature speci
 
 ### Claude Command (/specify)
 
-Interactive Claude Command with two primary workflows:
+Interactive Claude Command with three primary workflows:
 
 1. **Requirements Building:**
 - Requirements gathering via Q&A
@@ -88,10 +91,16 @@ Interactive Claude Command with two primary workflows:
 - Requirements finalization
 - Optional interactive review
 
-2. **Implementation Planning:**
+2. **Technical Specification Creation:**
+- Automated determination of useful technical specs (using tech-spec-beck agent)
+- Generation of OpenAPI specs, data models, diagrams, etc.
+- Interactive review and requirements integration
+
+3. **Implementation Planning:**
 - Codebase analysis for technical approach
 - Implementation Q&A for technical details
 - Plan generation with detailed tasks
+- Scope creep detection (using scope-creep-craig agent)
 - Optional interactive review
 
 Features state tracking and a one-question-at-a-time interview style with smart defaults.

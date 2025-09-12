@@ -22,6 +22,12 @@ func InitProject(targetDir string) ([]string, error) {
 		return nil, fmt.Errorf("failed to create .claude/commands directory: %w", err)
 	}
 
+	// Create .claude/agents directory
+	agentsDir := filepath.Join(targetDir, ".claude", "agents")
+	if err := os.MkdirAll(agentsDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create .claude/agents directory: %w", err)
+	}
+
 	// Create .spec directory
 	specDir := filepath.Join(targetDir, ".spec")
 	if err := os.MkdirAll(specDir, 0755); err != nil {
@@ -52,6 +58,32 @@ func InitProject(targetDir string) ([]string, error) {
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to copy commands: %w", err)
+	}
+
+	// Copy agents from embedded assets
+	agentsFS := assets.GetAgentsFS()
+	err = fs.WalkDir(agentsFS, "agents", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+
+		// Read file from embedded FS
+		content, err := fs.ReadFile(agentsFS, path)
+		if err != nil {
+			return err
+		}
+
+		// Write to target directory
+		relPath := strings.TrimPrefix(path, "agents/")
+		targetPath := filepath.Join(agentsDir, relPath)
+		createdFiles = append(createdFiles, filepath.Join(".claude", "agents", relPath))
+		return os.WriteFile(targetPath, content, 0644)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy agents: %w", err)
 	}
 
 	// Create .spec/README.md

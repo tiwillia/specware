@@ -32,6 +32,7 @@ If the specware tool is not avaialble, immediately stop and instruct the user to
 **Directory Structure Created**
 
   .claude/commands/                          # Claude Code commands (includes specify.md workflow)
+  .claude/agents/                            # Claude Code agents for specialized workflows
   .spec/                                     # Feature specifications (001-feature-name/, 002-another-feature/)
   .spec/001-feature-name/.spec-status.json    # Feature status tracking
 
@@ -109,6 +110,40 @@ If unsure, ask for clarification or request a feature name.
   5. Once the user is satisfied, proceed to the next section.
 - Once all sections are approved, use `specware feature update-state <short-name> "Requirements Complete"`
 
+### Phase 2: Technical Specification Creation
+Technical specifications, such as OpenAPI, CLI reference, API output, Diagrams, data models, etc often help refine requirements before planning the implementation.
+
+#### Step 1: Determine Necessary Technical Specs
+- Offer three options to the user to generate technical specifications to further refine requirements:
+  1. Provide specific technical specification types you'd like to generate and review
+  2. Use an agent to determine the best technical specification to generate
+  3. Skip creating specific technical specifications (not recommended)
+- If (1), ask the user to provide the technical specification types, providing a single suggestion, and move to the next step with the response.
+- If (3), move to the next phase
+- If (2), use the tech-spec-beck agent to determine the top 1-2 technical specifications that would be most useful to continue to define requirements for this feature.
+
+#### Step 2: Generate Technical Specifications
+- Using the technical specification types provided either by the user or the agent:
+  - Review the requirements again to determine technical specification details.
+  - Generate the technical specifications content
+  - Store the technical specification in the spec sub-directory for this feature.
+  - Use the file format that makes the most sense (OpenAPI: YAML, for example).
+  - Keep the technical specification document limited to only the technical details - do not add summaries, descriptions, or other text.
+
+#### Step 3: Interactive Review
+- Generate the most important 1-2 questions that would provide additional clarification needed for the specification.
+  - Ask questions one at a time proposing the question with a smart default option
+- Display the technical specification without modification to the user, then ask questions.
+- Consider the answers and update the specification as needed.
+- Display the technical specification without modification to the user again, then ask for any additional amendments or changes required.
+
+#### Step 4: Requirements Integration
+- With the new technical specification(s), consider each section of the requirements file and update them as necessary to reflect changes in the requirements.
+- Inform the user of the changes made.
+- Offer two options:
+  1. Stop here for asynchronous review and feedback of the updated requirements document.
+  2. Move to implementation planning phase
+
 ### Phase 2: Implementation Planning
 When the user is ready for implementation planning:
 
@@ -156,7 +191,15 @@ When the user is ready for implementation planning:
 - Write the complete implementation plan to `implementation-plan.md`
 - Update status with `specware feature update-state <short-name> "Implementation Plan Generated"`
 
-#### Step 6: Interactive Review
+#### Step 6: Identify Scope Creep
+- Use the scope-creep-craig agent to determine any areas in the implementation plan that may exceed the approved requirements.
+- Consider scope-creep-craig's most important feedback:
+  - Ignore feedback that is minor.
+  - Collect no more than 2-3 suggestions.
+- Display the suggested changes to the implementation plan to the user and offer to make them all, none, or individual changes they desire
+- Update the implementation plan as the user requested.
+
+#### Step 7: Interactive Review
 - Use `specware feature update-state <short-name> "Implementation Plan Interactive Review"`
 - For each section or phase of the `implementation-plan.md` document, perform the following interactive review steps:
   1. Generate a 1-3 sentence summary of the section.

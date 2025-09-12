@@ -33,6 +33,10 @@ var _ = Describe("Spec", func() {
 			claudeDir := filepath.Join(tempDir, ".claude", "commands")
 			Expect(claudeDir).To(BeADirectory())
 
+			// Check .claude/agents directory exists
+			agentsDir := filepath.Join(tempDir, ".claude", "agents")
+			Expect(agentsDir).To(BeADirectory())
+
 			// Check .spec directory exists
 			specDir := filepath.Join(tempDir, ".spec")
 			Expect(specDir).To(BeADirectory())
@@ -52,6 +56,23 @@ var _ = Describe("Spec", func() {
 			content, err := os.ReadFile(specifyPath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(content)).To(ContainSubstring("Specify - Spec-driven Development Workflow"))
+		})
+
+		It("should copy agent files", func() {
+			_, err := spec.InitProject(tempDir)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Check that agent files are copied
+			techSpecPath := filepath.Join(tempDir, ".claude", "agents", "tech-spec-beck.md")
+			Expect(techSpecPath).To(BeAnExistingFile())
+
+			scopeCreepPath := filepath.Join(tempDir, ".claude", "agents", "scope-creep-craig.md")
+			Expect(scopeCreepPath).To(BeAnExistingFile())
+
+			// Verify content
+			content, err := os.ReadFile(techSpecPath)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(content)).To(ContainSubstring("tech-spec-beck"))
 		})
 
 		It("should create .spec/README.md", func() {

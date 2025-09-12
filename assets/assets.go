@@ -11,6 +11,9 @@ var templatesFS embed.FS
 //go:embed commands/*
 var commandsFS embed.FS
 
+//go:embed agents/*
+var agentsFS embed.FS
+
 //go:embed spec-readme.md
 var specReadmeContent embed.FS
 
@@ -22,6 +25,11 @@ func GetTemplatesFS() fs.FS {
 // GetCommandsFS returns the embedded commands filesystem  
 func GetCommandsFS() fs.FS {
 	return commandsFS
+}
+
+// GetAgentsFS returns the embedded agents filesystem
+func GetAgentsFS() fs.FS {
+	return agentsFS
 }
 
 // GetSpecReadme returns the content of the spec README file

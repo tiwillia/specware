@@ -37,16 +37,17 @@ The project follows a standard Go CLI structure using Cobra for command handling
   - `localize_templates.go` - Template localization command
   - `feature.go` - Feature management commands with status tracking
 - **`internal/spec/`** - Core business logic for spec-driven workflows
-  - Handles project initialization with `.claude/commands` and `.spec` directories
-  - Manages embedded asset copying (commands and templates)
+  - Handles project initialization with `.claude/commands`, `.claude/agents` and `.spec` directories
+  - Manages embedded asset copying (commands, agents and templates)
   - Provides feature numbering and directory structure management
   - Implements status tracking through `.spec-status.json` files
-- **`assets/`** - Embedded file system containing templates and commands
+- **`assets/`** - Embedded file system containing templates, commands and agents
 
 ## Key Functionality
 
 The tool creates a standardized project structure:
 - `.claude/commands/` - Claude Code command files (includes `specify.md` workflow)
+- `.claude/agents/` - Claude Code agent files for specialized workflows
 - `.spec/` - Feature specifications directory with numbered folders (e.g., `001-feature-name`)
 - `.spec/templates/` - Localized templates for customization
 - `.spec-status.json` files - Track feature development phases with JSON status
