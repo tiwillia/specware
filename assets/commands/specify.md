@@ -1,46 +1,7 @@
 # Specify - Spec-driven Development Workflow
 
 ## Summary
-Guide the user through a comprehensive spec-driven development workflow for feature requirements gathering and implementation planning using the specware tool.
-
-## Important Rules
-- Always use the specware tool to track state and create artifacts
-- Maintain one feature at a time in active development
-- Support stopping and resuming at any point in the workflow
-- Record all Q&A interactions in the appropriate q&a files
-- Follow the existing codebase patterns and conventions
-- Use actual file paths and component names in artifacts
-
-### Q&A Rules
-- ONLY yes/no questions with smart defaults
-- ONE question at a time
-- Write ALL questions to file BEFORE asking any
-- Stay focused on requirements during requirements gathering, exclude implementation details
-- Document WHY each default makes sense
-- The answer "I don't know" is okay, use the default in this case.
-
-### Specware usage Guidance
-The specware tool is necessary to facilitate the basic operations of the workflow.
-
-If the specware tool is not avaialble, immediately stop and instruct the user to install the tool.
-
-**Feature Management**
-  specware feature new-requirements <short-name>         # Add requirements to feature (creates dir if not exist)
-  specware feature new-implementation-plan <short-name>  # Add implementation plan to feature (creates dir if not exist)
-  specware feature update-state <short-name> <status>    # Update feature development status
-
-**Directory Structure Created**
-
-  .claude/commands/                          # Claude Code commands (includes specify.md workflow)
-  .claude/agents/                            # Claude Code agents for specialized workflows
-  .spec/                                     # Feature specifications (001-feature-name/, 002-another-feature/)
-  .spec/001-feature-name/.spec-status.json    # Feature status tracking
-
-**Typical Workflow**
-
-  1. specware feature new-requirements user-auth - Start new feature
-  2. specware feature new-implementation-plan user-auth - Add implementation planning
-  3. specware feature update-state user-auth "implementation-complete" - Track progress
+Guide the user through a comprehensive spec-driven development workflow for feature requirements gathering and implementation planning based on $ARGUMENTS using the specware tool.
 
 ## Workflow
 
@@ -54,6 +15,7 @@ $ARGUMENTS should be either:
 If unsure, ask for clarification or request a feature name.
 
 ### Phase 1: Requirements Building
+Guide the user through generating a requirements specification.
 
 #### Step 1: Feature Specification File Setup
 - Generate a descriptive short-name based on the feature description
@@ -230,3 +192,42 @@ When the user is ready for implementation planning:
 ## Q8: Will this require new database migrations in db/migrations/?
 **Default if unknown:** No (based on similar features not requiring schema changes)
 ```
+
+## Important Rules
+- Always use the specware tool to track state and create artifacts
+- Maintain one feature at a time in active development
+- Support stopping and resuming at any point in the workflow
+- Record all Q&A interactions in the appropriate q&a files
+- Follow the existing codebase patterns and conventions
+- Use actual file paths and component names in artifacts
+
+### Q&A Rules
+- ONLY yes/no questions with smart defaults
+- ONE question at a time
+- Write ALL questions to file BEFORE asking any
+- Stay focused on requirements during requirements gathering, exclude implementation details
+- Document WHY each default makes sense
+- The answer "I don't know" is okay, use the default in this case.
+
+### Specware usage Guidance
+The specware tool is necessary to facilitate the basic operations of the workflow.
+
+If the specware tool is not avaialble, immediately stop and instruct the user to install the tool.
+
+**Feature Management**
+  specware feature new-requirements <short-name>         # Add requirements to feature (creates dir if not exist)
+  specware feature new-implementation-plan <short-name>  # Add implementation plan to feature (creates dir if not exist)
+  specware feature update-state <short-name> <status>    # Update feature development status
+
+**Directory Structure Created**
+
+  .claude/commands/                          # Claude Code commands (includes specify.md workflow)
+  .claude/agents/                            # Claude Code agents for specialized workflows
+  .spec/                                     # Feature specifications (001-feature-name/, 002-another-feature/)
+  .spec/001-feature-name/.spec-status.json    # Feature status tracking
+
+**Typical Workflow**
+
+  1. specware feature new-requirements user-auth - Start new feature
+  2. specware feature new-implementation-plan user-auth - Add implementation planning
+  3. specware feature update-state user-auth "implementation-complete" - Track progress
