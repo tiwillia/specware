@@ -97,6 +97,10 @@ These commands are intended to be run by Claude Code to facilitate feature speci
 - `feature new-implementation-plan <short-name>` - Add implementation plan to existing feature
 - `feature update-state <short-name> <status>` - Update feature development status
 
+#### Jira Integration
+These commands are intended to be run by Claude Code during the specification workflow to gather context from Jira:
+- `jira get-issue <issue-key>` - Fetch and display a single Jira issue for context gathering
+
 ### Claude Command (/specify)
 
 Interactive Claude Command with three primary workflows:
