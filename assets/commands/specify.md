@@ -76,21 +76,26 @@ Guide the user through generating a requirements specification.
 Technical specifications, such as OpenAPI, CLI reference, API output, Diagrams, data models, etc often help refine requirements before planning the implementation.
 
 #### Step 1: Determine Necessary Technical Specs
-- Offer three options to the user to generate technical specifications to further refine requirements:
+- Present three options to the user to generate technical specifications to further refine requirements:
   1. Provide specific technical specification types you'd like to generate and review
   2. Use an agent to determine the best technical specification to generate
   3. Skip creating specific technical specifications (not recommended)
-- If (1), ask the user to provide the technical specification types, providing a single suggestion, and move to the next step with the response.
-- If (3), move to the next phase
-- If (2), use the tech-spec-beck agent to determine the top 1-2 technical specifications that would be most useful to continue to define requirements for this feature.
+- **Wait for user selection before proceeding**
+- If user selects (1): Ask the user to provide the technical specification types, providing a single suggestion, then **wait for response** before moving to the next step
+- If user selects (3): Move to the next phase
+- If user selects (2): Use the tech-spec-beck agent to determine the top 1-2 technical specifications, then **present the agent's recommendations to the user and ask for approval** before proceeding
 
 #### Step 2: Generate Technical Specifications
-- Using the technical specification types provided either by the user or the agent:
-  - Review the requirements again to determine technical specification details.
+- Present the technical specification types (from user input or approved agent recommendations)
+- **Ask user to confirm which specifications to generate before proceeding**
+- **After user approval**, for each approved specification:
+  - Review the requirements again to determine technical specification details
   - Generate the technical specifications content
-  - Store the technical specification in the spec sub-directory for this feature.
-  - Use the file format that makes the most sense (OpenAPI: YAML, for example).
-  - Keep the technical specification document limited to only the technical details - do not add summaries, descriptions, or other text.
+  - Store the technical specification in the spec sub-directory for this feature
+  - Use the file format that makes the most sense (OpenAPI: YAML, for example)
+  - Keep the technical specification document limited to only the technical details - do not add summaries, descriptions, or other text
+  - **Show the generated specification to the user**
+  - **Ask for approval before proceeding to the next specification**
 
 #### Step 3: Interactive Review
 - Generate the most important 1-2 questions that would provide additional clarification needed for the specification.
