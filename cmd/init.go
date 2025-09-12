@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"specware/internal/spec"
+	"github.com/tiwillia/specware/internal/spec"
 )
 
 var initCmd = &cobra.Command{

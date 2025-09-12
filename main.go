@@ -1,6 +1,6 @@
 package main
 
-import "specware/cmd"
+import "github.com/tiwillia/specware/cmd"
 
 func main() {
 	cmd.Execute()

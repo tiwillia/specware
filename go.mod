@@ -1,4 +1,4 @@
-module specware
+module github.com/tiwillia/specware
 
 go 1.24.5
 

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"specware/internal/spec"
+	"github.com/tiwillia/specware/internal/spec"
 )
 
 var featureCmd = &cobra.Command{
