@@ -1,0 +1,95 @@
+title: Jira REST API Integration Specification
+version: 1.0.0
+description: Technical specification for Jira REST API integration in specware CLI
+
+endpoint:
+  method: GET
+  path: "/rest/api/2/issue/{issueKey}"
+  base_url: "${JIRA_URL}"
+  timeout: 30s
+
+authentication:
+  type: personal_access_token
+  header: "Authorization"
+  format: "Bearer ${JIRA_API_TOKEN}"
+
+request:
+  headers:
+    Authorization: "Bearer ${JIRA_API_TOKEN}"
+    Accept: "application/json"
+    Content-Type: "application/json"
+  parameters:
+    issueKey:
+      type: string
+      pattern: "^[A-Za-z]+-[0-9]+$"
+      description: "Jira issue key format (e.g., PROJ-123 or proj-123)"
+
+response:
+  success:
+    status_code: 200
+    content_type: "application/json"
+    required_fields:
+      - key
+      - fields.summary
+      - fields.description
+      - fields.status.name
+      - fields.issuetype.name
+      - fields.priority.name
+      - fields.assignee.displayName
+    optional_fields:
+      - fields.assignee.emailAddress
+      - fields.reporter.displayName
+      - fields.created
+      - fields.updated
+
+error_responses:
+  authentication_failure:
+    status_code: 401
+    message: "Authentication failed. Check JIRA_API_TOKEN environment variable."
+    user_action: "Verify your personal access token has the correct permissions."
+  
+  issue_not_found:
+    status_code: 404
+    message: "Issue '{issueKey}' not found."
+    user_action: "Verify the issue key exists and you have permission to view it."
+  
+  permission_denied:
+    status_code: 403
+    message: "Access denied to issue '{issueKey}'."
+    user_action: "Verify you have permission to view this issue."
+  
+  invalid_url:
+    status_code: null
+    message: "Invalid JIRA_URL format."
+    user_action: "Ensure JIRA_URL is a valid URL (e.g., https://company.atlassian.net)"
+  
+  network_timeout:
+    status_code: null
+    message: "Network timeout after 30 seconds."
+    user_action: "Check network connectivity and Jira instance availability."
+  
+  server_error:
+    status_code: 500
+    message: "Jira server error."
+    user_action: "Try again later or contact your Jira administrator."
+
+environment_variables:
+  JIRA_URL:
+    required: true
+    validation: non_empty_string
+    example: "https://company.atlassian.net"
+  
+  JIRA_API_TOKEN:
+    required: true
+    validation: non_empty_string
+    sensitive: true
+    description: "Personal access token with issue read permissions"
+
+validation:
+  startup_checks:
+    - environment_variable_presence
+    - environment_variable_non_empty
+  
+  runtime_checks:
+    - issue_key_format
+    - url_accessibility

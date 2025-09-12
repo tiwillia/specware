@@ -36,11 +36,16 @@ The project follows a standard Go CLI structure using Cobra for command handling
   - `init.go` - Project initialization command
   - `localize_templates.go` - Template localization command
   - `feature.go` - Feature management commands with status tracking
+  - `jira.go` - Jira integration commands for issue fetching
 - **`internal/spec/`** - Core business logic for spec-driven workflows
   - Handles project initialization with `.claude/commands`, `.claude/agents` and `.spec` directories
   - Manages embedded asset copying (commands, agents and templates)
   - Provides feature numbering and directory structure management
   - Implements status tracking through `.spec-status.json` files
+- **`internal/jira/`** - Jira integration functionality
+  - HTTP client for Jira REST API communication
+  - Issue data types and JSON unmarshaling
+  - Issue formatting for Claude Code consumption
 - **`assets/`** - Embedded file system containing templates, commands and agents
 
 ## Key Functionality
@@ -59,6 +64,7 @@ The tool creates a standardized project structure:
 - `specware feature new-requirements <short-name>` - Create new feature specification directory
 - `specware feature new-implementation-plan <short-name>` - Add implementation plan to existing feature
 - `specware feature update-state <short-name> <status>` - Update feature status tracking
+- `specware jira get-issue <issue-key>` - Fetch Jira issue for context gathering during specifications
 
 ## Status Management
 
@@ -74,6 +80,14 @@ Features are tracked through `.spec-status.json` files with suggested statuses:
 - `"Implementation Plan Interactive Review"`
 - `"Implementation Planning Complete"`
 
+## Jira Integration
+
+The Jira integration requires environment variables for authentication:
+- `JIRA_URL` - Base URL of your Jira instance (e.g., https://company.atlassian.net)  
+- `JIRA_API_TOKEN` - Personal access token with issue read permissions
+
+The `jira get-issue` command fetches issue details and formats them for Claude Code consumption during the specification workflow. This enables context gathering from existing Jira tickets when creating feature specifications.
+
 ## Testing
 
-Uses Ginkgo v2 and Gomega for BDD-style testing. Test files are located in `internal/spec/` with the pattern `*_test.go` and `*_suite_test.go`.
+Uses Ginkgo v2 and Gomega for BDD-style testing. Test files are located in `internal/spec/` and `internal/jira/` with the pattern `*_test.go` and `*_suite_test.go`.

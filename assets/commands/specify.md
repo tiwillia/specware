@@ -11,8 +11,16 @@ $ARGUMENTS should be either:
 1. Feature requirements, indiciating a new feature specification should be started
 2. Feedback on requirements or implementation plans, indicating that finalization step is likely in progress and review is occurring asynchronously.
 3. A short name, indicating the user wants to pick up where they left off in this workflow for the feature with the given short name.
+4. A JIRA issue key (following pattern PROJ-1234), indicating that JIRA issue details should be gathered first.
 
 If unsure, ask for clarification or request a feature name.
+
+#### JIRA Issue Detection and Gathering
+If $ARGUMENTS contains a JIRA issue key (pattern: uppercase letters, dash, numbers like PROJ-1234):
+1. Use `specware jira get-issue <issue-key>` to fetch the JIRA issue details
+2. Extract the issue summary, description, and relevant details
+3. Use the JIRA information as the basis for feature requirements in the workflow
+4. Continue with Phase 1: Requirements Building using the JIRA details as input
 
 ### Phase 1: Requirements Building
 Guide the user through generating a requirements specification.
@@ -218,6 +226,9 @@ If the specware tool is not avaialble, immediately stop and instruct the user to
   specware feature new-requirements <short-name>         # Add requirements to feature (creates dir if not exist)
   specware feature new-implementation-plan <short-name>  # Add implementation plan to feature (creates dir if not exist)
   specware feature update-state <short-name> <status>    # Update feature development status
+
+**JIRA Integration**
+  specware jira get-issue <issue-key>                   # Fetch JIRA issue details by key (e.g., PROJ-1234)
 
 **Directory Structure Created**
 
