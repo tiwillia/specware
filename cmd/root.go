@@ -23,4 +23,5 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 	rootCmd.AddCommand(localizeTemplatesCmd)
 	rootCmd.AddCommand(featureCmd)
+	rootCmd.AddCommand(jiraCmd)
 }
