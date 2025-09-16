@@ -67,7 +67,7 @@ Guide the user through generating a requirements specification.
   2. Display the section in two parts:
     a) Show the exact section content from the file (verbatim, no modifications or paraphrasing)
     b) Then show the generated summary as a separate block below the original content
-  3. Ask the user for any changes or amendments.
+  3. Ask the user directly for any changes or amendments to this section or if they'd like to consider this section approved and move onto the next.
   4. If the user provides changes or amendments, make the changes and make any additional changes needed to other sections of the document.
   5. Once the user is satisfied, proceed to the next section.
 - Once all sections are approved, use `specware feature update-state <short-name> "Requirements Complete"`
@@ -102,7 +102,8 @@ Technical specifications, such as OpenAPI, CLI reference, API output, Diagrams, 
   - Ask questions one at a time proposing the question with a smart default option
 - Display the technical specification without modification to the user, then ask questions.
 - Consider the answers and update the specification as needed.
-- Display the technical specification without modification to the user again, then ask for any additional amendments or changes required.
+- Display the technical specification without modification to the user again
+- Ask the user directly if they'd like to make any changes or amendments or if they'd like to move onto the next step -> integrating the changes into the requirements documentation.
 
 #### Step 4: Requirements Integration
 - With the new technical specification(s), consider each section of the requirements file and update them as necessary to reflect changes in the requirements.
@@ -173,7 +174,7 @@ When the user is ready for implementation planning:
   2. Display the section in two parts:
     a) Show the exact section content from the file (verbatim, no modifications or paraphrasing)
     b) Then show the generated summary as a separate block below the original content
-  3. Ask the user for any changes or amendments.
+  3. Ask the user directly for any changes or amendments to this section or if they'd like to consider this section approved and move onto the next.
   4. If the user provides changes or amendments, make the changes and make any additional changes needed to other sections of the document.
   5. Once the user is satisfied, proceed to the next section.
 - Once all sections are approved, use `specware feature update-state <short-name> "Implementation Planning Complete"`
