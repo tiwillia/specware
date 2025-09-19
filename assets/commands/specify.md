@@ -3,6 +3,16 @@
 ## Summary
 Guide the user through a comprehensive spec-driven development workflow for feature requirements gathering and implementation planning based on $ARGUMENTS using the specware tool.
 
+## Configuration
+
+Before starting the workflow, read the configuration from `.spec/config.json` to determine the number of questions to ask at each step:
+- `requirements.discovery_questions`: Number of discovery questions during requirements gathering (default: 5)
+- `requirements.expert_questions`: Number of expert questions during requirements analysis (default: 4)
+- `implementation.plan_questions`: Number of questions during implementation planning (default: 5)
+- `implementation.testing_questions`: Number of testing questions during testing analysis (default: 2)
+
+If the config file doesn't exist or can't be read, use the default values shown above.
+
 ## Workflow
 
 ### Pre: Assess Input
@@ -25,7 +35,8 @@ Guide the user through generating a requirements specification.
 - Use `specware feature update-state <short-name> "Requirements Gathering"`
 - Fill in the basic sections and metadata of the requirements spec
 - Create initial content in both `requirements.md` and `context-requirements.md`
-- Generate the five most important yes/no questions to understand the problem space:
+- Read the configuration from `.spec/config.json` to determine the number of discovery questions to ask
+- Generate the configured number of most important yes/no questions to understand the problem space (default: 5):
   - Questions informed by codebase structure
   - Questions about user interactions and workflows
   - Questions about similar features users currently use
@@ -44,7 +55,8 @@ Guide the user through generating a requirements specification.
 #### Step 4: Expert Requirements Questions
 - Use `specware feature update-state <short-name> "Requirements Expert Q&A"`
 - Now you are an expert on the codebase, a senior developer with the right knowledge.
-- Write the top 3-5 most important questions yes/no questions to `context-requirements.md`
+- Read the configuration from `.spec/config.json` to determine the number of expert questions to ask
+- Write the configured number of most important yes/no questions to `context-requirements.md` (default: 4):
   - Questions about external integrations or third-party services
   - Questions about access control
   - Questions about performance or scale expectations
@@ -130,7 +142,8 @@ When the user is ready for implementation planning:
 
 #### Step 3: Implementation Plan Q&A
 - Use `specware feature update-state <short-name> "Implementation Plan Q&A"`
-- Generate the five most important yes/no questions to understand technical implementation details:
+- Read the configuration from `.spec/config.json` to determine the number of implementation plan questions to ask
+- Generate the configured number of most important yes/no questions to understand technical implementation details (default: 5):
   - Questions about best practices or patterns to follow
   - Questions about packaging and file structure
   - Questions about data model details and conventions
@@ -143,7 +156,8 @@ When the user is ready for implementation planning:
 
 #### Step 4: Testing Q&A
 - Review what testing exists for similar features and determine what unit, integration, and e2e tests may be necessary for this feature.
-- Generate at least 2 of the most important yes/no questions to clarify testing requirements, considering:
+- Read the configuration from `.spec/config.json` to determine the number of testing questions to ask
+- Generate the configured number of most important yes/no questions to clarify testing requirements (default: 2), considering:
   - Questions about unit, integration, and e2e testing
   - Questions about when to write which tests (Test Driven Development for example)
   - Questions about how to run specific tests if required and unclear
