@@ -35,8 +35,7 @@ func InitProject(targetDir string) ([]string, error) {
 	}
 
 	// Copy commands from embedded assets
-	commandsFS := assets.GetCommandsFS()
-	err := fs.WalkDir(commandsFS, "commands", func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(assets.CommandsFS, "commands", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -45,7 +44,7 @@ func InitProject(targetDir string) ([]string, error) {
 		}
 
 		// Read file from embedded FS
-		content, err := fs.ReadFile(commandsFS, path)
+		content, err := fs.ReadFile(assets.CommandsFS, path)
 		if err != nil {
 			return err
 		}
@@ -61,8 +60,7 @@ func InitProject(targetDir string) ([]string, error) {
 	}
 
 	// Copy agents from embedded assets
-	agentsFS := assets.GetAgentsFS()
-	err = fs.WalkDir(agentsFS, "agents", func(path string, d fs.DirEntry, err error) error {
+	err = fs.WalkDir(assets.AgentsFS, "agents", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -71,7 +69,7 @@ func InitProject(targetDir string) ([]string, error) {
 		}
 
 		// Read file from embedded FS
-		content, err := fs.ReadFile(agentsFS, path)
+		content, err := fs.ReadFile(assets.AgentsFS, path)
 		if err != nil {
 			return err
 		}
@@ -87,15 +85,40 @@ func InitProject(targetDir string) ([]string, error) {
 	}
 
 	// Create .spec/README.md
-	specReadmeContent, err := assets.GetSpecReadme()
+	specReadmeBytes, err := assets.SpecReadmeContent.ReadFile("spec-readme.md")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get spec README content: %w", err)
 	}
-	
+
 	readmePath := filepath.Join(specDir, "README.md")
 	createdFiles = append(createdFiles, ".spec/README.md")
-	if err := os.WriteFile(readmePath, specReadmeContent, 0644); err != nil {
+	if err := os.WriteFile(readmePath, specReadmeBytes, 0644); err != nil {
 		return nil, fmt.Errorf("failed to create .spec/README.md: %w", err)
+	}
+
+	// Copy config from embedded assets
+	err = fs.WalkDir(assets.ConfigFS, "config", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+
+		// Read file from embedded FS
+		content, err := fs.ReadFile(assets.ConfigFS, path)
+		if err != nil {
+			return err
+		}
+
+		// Write to target directory
+		relPath := strings.TrimPrefix(path, "config/")
+		targetPath := filepath.Join(specDir, relPath)
+		createdFiles = append(createdFiles, filepath.Join(".spec", relPath))
+		return os.WriteFile(targetPath, content, 0644)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to copy config: %w", err)
 	}
 
 	// Create example spec directory
@@ -130,8 +153,7 @@ func LocalizeTemplates(targetDir string) ([]string, error) {
 	}
 
 	// Copy templates from embedded assets
-	templatesFS := assets.GetTemplatesFS()
-	err := fs.WalkDir(templatesFS, "templates", func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(assets.TemplatesFS, "templates", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -140,7 +162,7 @@ func LocalizeTemplates(targetDir string) ([]string, error) {
 		}
 
 		// Read file from embedded FS
-		content, err := fs.ReadFile(templatesFS, path)
+		content, err := fs.ReadFile(assets.TemplatesFS, path)
 		if err != nil {
 			return err
 		}
@@ -219,8 +241,7 @@ func getTemplate(targetDir, templateName string) ([]byte, error) {
 	}
 	
 	// Fall back to embedded template
-	templatesFS := assets.GetTemplatesFS()
-	return fs.ReadFile(templatesFS, filepath.Join("templates", templateName))
+	return fs.ReadFile(assets.TemplatesFS, filepath.Join("templates", templateName))
 }
 
 // CreateNewRequirements creates a new feature requirements specification
@@ -371,6 +392,7 @@ func findFeatureDirectory(specDir, shortName string) (string, error) {
 type FeatureStatus struct {
 	CurrentStep string `json:"current-step"`
 }
+
 
 // UpdateFeatureStatus updates the status of a feature specification
 func UpdateFeatureStatus(targetDir, shortName, status string) error {

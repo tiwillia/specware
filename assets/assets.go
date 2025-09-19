@@ -1,38 +1,18 @@
 package assets
 
-import (
-	"embed"
-	"io/fs"
-)
+import "embed"
 
-//go:embed templates/*
-var templatesFS embed.FS
+//go:embed commands
+var CommandsFS embed.FS
 
-//go:embed commands/*
-var commandsFS embed.FS
+//go:embed agents
+var AgentsFS embed.FS
 
-//go:embed agents/*
-var agentsFS embed.FS
+//go:embed templates
+var TemplatesFS embed.FS
 
 //go:embed spec-readme.md
-var specReadmeContent embed.FS
+var SpecReadmeContent embed.FS
 
-// GetTemplatesFS returns the embedded templates filesystem
-func GetTemplatesFS() fs.FS {
-	return templatesFS
-}
-
-// GetCommandsFS returns the embedded commands filesystem  
-func GetCommandsFS() fs.FS {
-	return commandsFS
-}
-
-// GetAgentsFS returns the embedded agents filesystem
-func GetAgentsFS() fs.FS {
-	return agentsFS
-}
-
-// GetSpecReadme returns the content of the spec README file
-func GetSpecReadme() ([]byte, error) {
-	return specReadmeContent.ReadFile("spec-readme.md")
-}
+//go:embed config
+var ConfigFS embed.FS
