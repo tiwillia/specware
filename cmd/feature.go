@@ -25,7 +25,7 @@ sequential number starting from 001. The directory will contain:
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]
-		
+
 		cwd, err := os.Getwd()
 		if err != nil {
 			fmt.Printf("Error getting current directory: %v\n", err)
@@ -57,7 +57,7 @@ The feature directory must already exist (created with new-requirements). This c
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]
-		
+
 		cwd, err := os.Getwd()
 		if err != nil {
 			fmt.Printf("Error getting current directory: %v\n", err)
@@ -95,11 +95,11 @@ Claude command include:
 - "Implementation Plan Generated"
 - "Implementation Plan Interactive Review"
 - "Implementation Planning Complete"`,
-	Args:  cobra.ExactArgs(2),
+	Args: cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		shortName := args[0]
 		status := args[1]
-		
+
 		cwd, err := os.Getwd()
 		if err != nil {
 			fmt.Printf("Error getting current directory: %v\n", err)
