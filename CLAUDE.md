@@ -12,12 +12,15 @@ Specware is a CLI tool that enables spec-driven development workflows for Claude
 # Build the project
 make build
 
-# Run tests (uses Ginkgo/Gomega framework)
+# Run all tests (unit and integration suites)
 make test
-# or directly: go test ./...
 
-# Run tests for specific package
-go test ./internal/spec
+# Run tests directly with go (unit and integration)
+go test ./...
+
+# Run specific test suites
+go test ./internal/spec  # Unit tests only
+go test ./tests          # Integration tests only
 
 # Clean build artifacts
 make clean
@@ -76,4 +79,14 @@ Features are tracked through `.spec-status.json` files with suggested statuses:
 
 ## Testing
 
-Uses Ginkgo v2 and Gomega for BDD-style testing. Test files are located in `internal/spec/` with the pattern `*_test.go` and `*_suite_test.go`.
+Uses Ginkgo v2 and Gomega for BDD-style testing with two test suites:
+
+### Unit Tests
+Located in `internal/spec/` with the pattern `*_test.go` and `*_suite_test.go`. These test individual components and business logic.
+
+### Integration Tests
+Located in `tests/` directory with full end-to-end testing of the CLI tool:
+- `tests/integration_suite_test.go` - Integration test suite setup
+- `tests/init_integration_test.go` - Tests for project initialization workflows including Claude Code settings integration
+- Tests build the actual binary and execute commands in isolated temporary directories
+- Validates complete workflows including allowlist updates and settings file handling
