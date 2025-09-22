@@ -1,0 +1,10 @@
+{
+  "requirements": {
+    "discovery_questions": 5,
+    "expert_questions": 4
+  },
+  "implementation": {
+    "plan_questions": 5,
+    "testing_questions": 2
+  }
+}
