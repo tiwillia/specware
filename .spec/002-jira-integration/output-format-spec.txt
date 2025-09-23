@@ -1,0 +1,89 @@
+JIRA ISSUE OUTPUT FORMAT SPECIFICATION
+======================================
+
+Template Structure:
+==================
+
+Issue: {key}
+Title: {summary}
+Type: {issuetype}
+Status: {status}
+Priority: {priority}
+Assignee: {assignee}
+
+Description:
+{description}
+
+Field Formatting Rules:
+======================
+
+1. Header Line:
+   - Always starts with "Issue: " followed by the issue key
+   - No additional formatting or prefixes
+
+2. Field Labels:
+   - Use exact labels: "Title:", "Type:", "Status:", "Priority:", "Assignee:"
+   - Each label followed by single space and field value
+   - One field per line
+
+3. Field Values:
+   - Display actual field values with no modification
+   - If field is null/empty, display "Not assigned" for assignee, "None" for others
+   - No quotes, brackets, or additional formatting around values
+
+4. Description Section:
+   - Always include "Description:" header with blank line after
+   - Preserve original description formatting including newlines
+   - If description is empty, display "No description provided"
+
+5. Line Spacing:
+   - Single blank line between field section and description header
+   - No trailing blank lines at end of output
+
+6. Special Characters:
+   - No emojis anywhere in output
+   - Preserve original text formatting (bold, italics) as plain text
+   - No HTML markup conversion
+
+Example Output:
+==============
+
+Issue: PROJ-123
+Title: Fix authentication bug in login system
+Type: Bug
+Status: In Progress
+Priority: High
+Assignee: John Smith
+
+Description:
+Users are experiencing authentication failures when logging in with
+special characters in their passwords. The issue appears to be related
+to URL encoding of the credentials.
+
+Steps to reproduce:
+1. Create user with password containing & or + symbols
+2. Attempt to log in
+3. Authentication fails with 401 error
+
+Expected: Login should succeed
+Actual: 401 Unauthorized error
+
+Error Handling:
+==============
+
+1. Missing Fields:
+   - If summary is missing: display "No title provided"
+   - If type is missing: display "Unknown"
+   - If status is missing: display "Unknown"
+   - If priority is missing: display "None"
+   - If assignee is missing: display "Not assigned"
+
+2. Long Content:
+   - No truncation of any field values
+   - Preserve all content exactly as received from Jira
+   - No line wrapping modifications
+
+3. Null/Empty Values:
+   - Treat null and empty string identically
+   - Use default values as specified above
+   - Never display "null" or empty lines
