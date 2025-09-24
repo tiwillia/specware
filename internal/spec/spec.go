@@ -14,6 +14,11 @@ import (
 	"github.com/tiwillia/specware/assets"
 )
 
+// Constants for Claude Code settings
+const (
+	SpecwareAllowlistEntry = "Bash(specware:*)"
+)
+
 // InitProject initializes a project with spec-driven workflow support
 func InitProject(targetDir string) ([]string, error) {
 	var createdFiles []string
@@ -407,7 +412,7 @@ type PermissionsConfig struct {
 // UpdateClaudeSettings updates .claude/settings.local.json to allow specware commands
 func UpdateClaudeSettings(targetDir string, autoYes bool) error {
 	settingsPath := filepath.Join(targetDir, ".claude", "settings.local.json")
-	specwareAllowEntry := "Bash(specware:*)"
+	specwareAllowEntry := SpecwareAllowlistEntry
 
 	// Check if settings file exists
 	_, err := os.Stat(settingsPath)
@@ -430,7 +435,14 @@ func UpdateClaudeSettings(targetDir string, autoYes bool) error {
 		fmt.Print("\nUpdate permissions? (y/N): ")
 
 		scanner := bufio.NewScanner(os.Stdin)
-		scanner.Scan()
+		if !scanner.Scan() {
+			if err := scanner.Err(); err != nil {
+				return fmt.Errorf("failed to read user input: %w", err)
+			}
+			// EOF reached (user pressed Ctrl+D or similar)
+			fmt.Println("\nSkipping Claude Code permissions update.")
+			return nil
+		}
 		response := strings.TrimSpace(strings.ToLower(scanner.Text()))
 
 		if response != "y" && response != "yes" {
@@ -439,26 +451,52 @@ func UpdateClaudeSettings(targetDir string, autoYes bool) error {
 		}
 	}
 
-	// Read existing settings
-	var settings ClaudeSettings
+	// Read existing settings into a map to preserve unknown fields
 	settingsData, err := os.ReadFile(settingsPath)
 	if err != nil {
 		return fmt.Errorf("failed to read settings file: %w", err)
 	}
 
-	if err := json.Unmarshal(settingsData, &settings); err != nil {
+	var rawSettings map[string]interface{}
+	if err := json.Unmarshal(settingsData, &rawSettings); err != nil {
 		fmt.Printf("Warning: Settings file appears to be malformed JSON. Skipping update.\n")
 		fmt.Printf("You can manually add \"%s\" to the allow list if needed.\n", specwareAllowEntry)
 		return nil
 	}
 
-	// Initialize permissions structure if needed
-	if settings.Permissions == nil {
-		settings.Permissions = &PermissionsConfig{}
+	// Initialize rawSettings if nil
+	if rawSettings == nil {
+		rawSettings = make(map[string]interface{})
+	}
+
+	// Get or create permissions object
+	var permissions map[string]interface{}
+	if permissionsRaw, exists := rawSettings["permissions"]; exists && permissionsRaw != nil {
+		if permissionsMap, ok := permissionsRaw.(map[string]interface{}); ok {
+			permissions = permissionsMap
+		} else {
+			permissions = make(map[string]interface{})
+		}
+	} else {
+		permissions = make(map[string]interface{})
+		rawSettings["permissions"] = permissions
+	}
+
+	// Get or create allow list
+	var allowList []string
+	if allowRaw, exists := permissions["allow"]; exists && allowRaw != nil {
+		if allowSlice, ok := allowRaw.([]interface{}); ok {
+			allowList = make([]string, len(allowSlice))
+			for i, v := range allowSlice {
+				if str, ok := v.(string); ok {
+					allowList[i] = str
+				}
+			}
+		}
 	}
 
 	// Check if specware entry already exists
-	for _, entry := range settings.Permissions.Allow {
+	for _, entry := range allowList {
 		if entry == specwareAllowEntry {
 			fmt.Printf("Specware permissions already configured in %s\n", settingsPath)
 			return nil
@@ -466,10 +504,11 @@ func UpdateClaudeSettings(targetDir string, autoYes bool) error {
 	}
 
 	// Add specware entry to allow list
-	settings.Permissions.Allow = append(settings.Permissions.Allow, specwareAllowEntry)
+	allowList = append(allowList, specwareAllowEntry)
+	permissions["allow"] = allowList
 
 	// Write updated settings back to file
-	updatedData, err := json.MarshalIndent(settings, "", "  ")
+	updatedData, err := json.MarshalIndent(rawSettings, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal updated settings: %w", err)
 	}

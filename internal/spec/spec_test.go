@@ -566,7 +566,7 @@ var _ = Describe("Spec", func() {
 			err = json.Unmarshal(content, &settings)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(settings.Permissions).NotTo(BeNil())
-			Expect(settings.Permissions.Allow).To(ContainElement("Bash(specware:*)"))
+			Expect(settings.Permissions.Allow).To(ContainElement(spec.SpecwareAllowlistEntry))
 		})
 
 		It("should preserve existing permissions", func() {
@@ -593,14 +593,56 @@ var _ = Describe("Spec", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(settings.Permissions.Allow).To(ContainElement("Bash(git:*)"))
 			Expect(settings.Permissions.Allow).To(ContainElement("Bash(npm:*)"))
-			Expect(settings.Permissions.Allow).To(ContainElement("Bash(specware:*)"))
+			Expect(settings.Permissions.Allow).To(ContainElement(spec.SpecwareAllowlistEntry))
+		})
+
+		It("should preserve unknown root-level fields", func() {
+			// Create settings file with unknown fields that should be preserved
+			settingsJSON := `{
+  "permissions": {
+    "allow": ["Bash(git:*)"]
+  },
+  "customField": "should be preserved",
+  "anotherField": {
+    "nested": "value"
+  },
+  "arrayField": [1, 2, 3]
+}`
+			err := os.WriteFile(settingsPath, []byte(settingsJSON), 0644)
+			Expect(err).NotTo(HaveOccurred())
+
+			err = spec.UpdateClaudeSettings(tempDir, true)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Read the updated file as raw JSON to verify all fields are preserved
+			content, err := os.ReadFile(settingsPath)
+			Expect(err).NotTo(HaveOccurred())
+
+			var rawSettings map[string]interface{}
+			err = json.Unmarshal(content, &rawSettings)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Verify unknown fields were preserved
+			Expect(rawSettings["customField"]).To(Equal("should be preserved"))
+			Expect(rawSettings["anotherField"]).To(Equal(map[string]interface{}{"nested": "value"}))
+			Expect(rawSettings["arrayField"]).To(Equal([]interface{}{1.0, 2.0, 3.0})) // JSON numbers become float64
+
+			// Verify permissions were updated correctly
+			permissions := rawSettings["permissions"].(map[string]interface{})
+			allowList := permissions["allow"].([]interface{})
+			allowStrings := make([]string, len(allowList))
+			for i, v := range allowList {
+				allowStrings[i] = v.(string)
+			}
+			Expect(allowStrings).To(ContainElement("Bash(git:*)"))
+			Expect(allowStrings).To(ContainElement(spec.SpecwareAllowlistEntry))
 		})
 
 		It("should be idempotent - not add duplicate entries", func() {
 			// Create settings with specware already present
 			existingSettings := spec.ClaudeSettings{
 				Permissions: &spec.PermissionsConfig{
-					Allow: []string{"Bash(specware:*)", "Bash(git:*)"},
+					Allow: []string{spec.SpecwareAllowlistEntry, "Bash(git:*)"},
 				},
 			}
 			data, err := json.MarshalIndent(existingSettings, "", "  ")
@@ -622,7 +664,7 @@ var _ = Describe("Spec", func() {
 			// Count occurrences of specware entry
 			count := 0
 			for _, entry := range settings.Permissions.Allow {
-				if entry == "Bash(specware:*)" {
+				if entry == spec.SpecwareAllowlistEntry {
 					count++
 				}
 			}
@@ -678,7 +720,7 @@ var _ = Describe("Spec", func() {
 			err = json.Unmarshal(content, &settings)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(settings.Permissions).NotTo(BeNil())
-			Expect(settings.Permissions.Allow).To(ContainElement("Bash(specware:*)"))
+			Expect(settings.Permissions.Allow).To(ContainElement(spec.SpecwareAllowlistEntry))
 		})
 	})
 })

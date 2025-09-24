@@ -86,7 +86,7 @@ var _ = Describe("Init Integration Tests", func() {
 			outputStr := string(output)
 			Expect(outputStr).To(ContainSubstring("Successfully initialized spec-driven workflow"))
 			Expect(outputStr).To(ContainSubstring("Successfully updated Claude Code permissions"))
-			Expect(outputStr).To(ContainSubstring("Added: \"Bash(specware:*)\""))
+			Expect(outputStr).To(ContainSubstring("Added: \"" + spec.SpecwareAllowlistEntry + "\""))
 
 			// Verify settings were updated correctly
 			updatedData, err := os.ReadFile(settingsPath)
@@ -97,7 +97,7 @@ var _ = Describe("Init Integration Tests", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(updatedSettings.Permissions.Allow).To(ContainElement("Bash(git:*)"))
-			Expect(updatedSettings.Permissions.Allow).To(ContainElement("Bash(specware:*)"))
+			Expect(updatedSettings.Permissions.Allow).To(ContainElement(spec.SpecwareAllowlistEntry))
 		})
 
 		It("should be idempotent - not add duplicate entries with -y flag", func() {
@@ -108,7 +108,7 @@ var _ = Describe("Init Integration Tests", func() {
 
 			existingSettings := spec.ClaudeSettings{
 				Permissions: &spec.PermissionsConfig{
-					Allow: []string{"Bash(specware:*)", "Bash(git:*)"},
+					Allow: []string{spec.SpecwareAllowlistEntry, "Bash(git:*)"},
 				},
 			}
 			settingsData, err := json.MarshalIndent(existingSettings, "", "  ")
@@ -138,7 +138,7 @@ var _ = Describe("Init Integration Tests", func() {
 			// Count occurrences of specware entry
 			count := 0
 			for _, entry := range updatedSettings.Permissions.Allow {
-				if entry == "Bash(specware:*)" {
+				if entry == spec.SpecwareAllowlistEntry {
 					count++
 				}
 			}
