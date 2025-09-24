@@ -1,0 +1,82 @@
+# CLI Help Specification for Claude Settings Allowlist Feature
+
+This document specifies the updated command-line help output for specware commands after implementing the Claude Code settings allowlist feature.
+
+## Current specware --help Output
+
+```
+A tool to facilitate spec-driven development workflows through Claude Code AI Coding Assistant.
+
+Usage:
+  specware [command]
+
+Available Commands:
+  completion         Generate the autocompletion script for the specified shell
+  feature            Feature specification commands
+  help               Help about any command
+  init               Initialize project to support spec-driven-workflow
+  localize-templates Create project-specific templates
+
+Flags:
+  -h, --help   help for specware
+
+Use "specware [command] --help" for more information about a command.
+```
+
+## Updated specware init --help Output
+
+**Current:**
+```
+Initialize project to support spec-driven-workflow
+
+Usage:
+  specware init <directory> [flags]
+
+Flags:
+  -h, --help   help for init
+```
+
+**Updated with new feature:**
+```
+Initialize project to support spec-driven-workflow
+
+This command creates the following directory structure:
+  .claude/commands/     - Claude Code command files (includes /specify workflow)
+  .claude/agents/       - Claude Code agent files for specialized workflows
+  .spec/                - Feature specifications directory
+  .spec/config.json     - Configuration for workflow question counts
+  .spec/README.md       - Documentation for the spec workflow
+
+Optional modifications (user will be prompted):
+  .claude/settings.local.json - Updates project permissions to allow specware
+                                commands without prompting (personal settings only)
+
+Usage:
+  specware init <directory> [flags]
+
+Flags:
+  -h, --help   help for init
+  -y, --yes    automatically answer yes to all prompts
+```
+
+## Behavior Changes
+
+### Without -y/--yes flag:
+- Prompts user: "Would you like to update Claude Code project permissions to allow specware commands without prompting? (y/N)"
+- Default behavior: No (user must explicitly opt-in)
+
+### With -y/--yes flag:
+- Automatically answers yes to all prompts, including the Claude Code permissions update
+- No interactive prompts shown
+- Provides feedback about actions taken
+
+## Example Usage
+
+```bash
+# Interactive mode (prompts for permissions update)
+specware init my-project
+
+# Non-interactive mode (automatically updates permissions)
+specware init my-project -y
+specware init my-project --yes
+```

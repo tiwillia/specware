@@ -1,6 +1,7 @@
 package spec
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/fs"
@@ -11,6 +12,11 @@ import (
 	"strings"
 
 	"github.com/tiwillia/specware/assets"
+)
+
+// Constants for Claude Code settings
+const (
+	SpecwareAllowlistEntry = "Bash(specware:*)"
 )
 
 // InitProject initializes a project with spec-driven workflow support
@@ -170,12 +176,12 @@ func LocalizeTemplates(targetDir string) ([]string, error) {
 		// Write to target directory
 		relPath := strings.TrimPrefix(path, "templates/")
 		targetPath := filepath.Join(templatesDir, relPath)
-		
+
 		// Check if file already exists
 		if _, err := os.Stat(targetPath); err == nil {
 			fmt.Printf("Warning: Template file %s already exists, overwriting\n", relPath)
 		}
-		
+
 		createdFiles = append(createdFiles, filepath.Join(".spec", "templates", relPath))
 		return os.WriteFile(targetPath, content, 0644)
 	})
@@ -215,7 +221,7 @@ func ValidateFeatureName(shortName string) error {
 	if shortName == "" {
 		return fmt.Errorf("feature name cannot be empty")
 	}
-	
+
 	// Check for valid characters (alphanumeric, hyphens, underscores)
 	matched, err := regexp.MatchString("^[a-zA-Z0-9_-]+$", shortName)
 	if err != nil {
@@ -224,11 +230,11 @@ func ValidateFeatureName(shortName string) error {
 	if !matched {
 		return fmt.Errorf("feature name can only contain letters, numbers, hyphens, and underscores")
 	}
-	
+
 	if len(shortName) > 50 {
 		return fmt.Errorf("feature name must be 50 characters or less")
 	}
-	
+
 	return nil
 }
 
@@ -239,7 +245,7 @@ func getTemplate(targetDir, templateName string) ([]byte, error) {
 	if content, err := os.ReadFile(localPath); err == nil {
 		return content, nil
 	}
-	
+
 	// Fall back to embedded template
 	return fs.ReadFile(assets.TemplatesFS, filepath.Join("templates", templateName))
 }
@@ -250,43 +256,43 @@ func CreateNewRequirements(targetDir, shortName string) ([]string, error) {
 	if err := ValidateFeatureName(shortName); err != nil {
 		return nil, err
 	}
-	
+
 	specDir := filepath.Join(targetDir, ".spec")
 	if _, err := os.Stat(specDir); os.IsNotExist(err) {
 		return nil, fmt.Errorf(".spec directory not found. Run 'specware init' first")
 	}
-	
+
 	// Get next feature number
 	featureNum, err := GetNextFeatureNumber(specDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get next feature number: %w", err)
 	}
-	
+
 	// Create feature directory
 	featureName := fmt.Sprintf("%03d-%s", featureNum, shortName)
 	featureDir := filepath.Join(specDir, featureName)
 	if err := os.MkdirAll(featureDir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create feature directory: %w", err)
 	}
-	
+
 	// Copy requirements template
 	requirementsContent, err := getTemplate(targetDir, "requirements.md")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get requirements template: %w", err)
 	}
-	
+
 	requirementsPath := filepath.Join(featureDir, "requirements.md")
 	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "requirements.md"))
 	if err := os.WriteFile(requirementsPath, requirementsContent, 0644); err != nil {
 		return nil, fmt.Errorf("failed to create requirements.md: %w", err)
 	}
-	
+
 	// Create context file from template
 	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get context template: %w", err)
 	}
-	
+
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Requirements", 1)
 	contextPath := filepath.Join(featureDir, "context-requirements.md")
@@ -294,7 +300,7 @@ func CreateNewRequirements(targetDir, shortName string) ([]string, error) {
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
 		return nil, fmt.Errorf("failed to create context-requirements.md: %w", err)
 	}
-	
+
 	// Create .spec-status.json file
 	statusPath := filepath.Join(featureDir, ".spec-status.json")
 	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, ".spec-status.json"))
@@ -308,7 +314,7 @@ func CreateNewRequirements(targetDir, shortName string) ([]string, error) {
 	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
 		return nil, fmt.Errorf("failed to create .spec-status.json: %w", err)
 	}
-	
+
 	return createdFiles, nil
 }
 
@@ -318,43 +324,43 @@ func CreateNewImplementationPlan(targetDir, shortName string) ([]string, error) 
 	if err := ValidateFeatureName(shortName); err != nil {
 		return nil, err
 	}
-	
+
 	specDir := filepath.Join(targetDir, ".spec")
 	if _, err := os.Stat(specDir); os.IsNotExist(err) {
 		return nil, fmt.Errorf(".spec directory not found. Run 'specware init' first")
 	}
-	
+
 	// Find the feature directory
 	featureDir, err := findFeatureDirectory(specDir, shortName)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Check if implementation plan already exists
 	planPath := filepath.Join(featureDir, "implementation-plan.md")
 	if _, err := os.Stat(planPath); err == nil {
 		return nil, fmt.Errorf("implementation plan already exists for feature %s", shortName)
 	}
-	
+
 	// Copy implementation plan template
 	planContent, err := getTemplate(targetDir, "implementation-plan.md")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get implementation plan template: %w", err)
 	}
-	
+
 	// Extract feature name from directory path for relative path
 	featureName := filepath.Base(featureDir)
 	createdFiles = append(createdFiles, filepath.Join(".spec", featureName, "implementation-plan.md"))
 	if err := os.WriteFile(planPath, planContent, 0644); err != nil {
 		return nil, fmt.Errorf("failed to create implementation-plan.md: %w", err)
 	}
-	
+
 	// Create context file from template
 	contextTemplate, err := getTemplate(targetDir, "context.md")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get context template: %w", err)
 	}
-	
+
 	// Replace placeholder with appropriate title
 	contextContent := strings.Replace(string(contextTemplate), "[Feature Name]", "Implementation Plan", 1)
 	contextPath := filepath.Join(featureDir, "context-implementation-plan.md")
@@ -362,7 +368,7 @@ func CreateNewImplementationPlan(targetDir, shortName string) ([]string, error) 
 	if err := os.WriteFile(contextPath, []byte(contextContent), 0644); err != nil {
 		return nil, fmt.Errorf("failed to create context-implementation-plan.md: %w", err)
 	}
-	
+
 	return createdFiles, nil
 }
 
@@ -372,7 +378,7 @@ func findFeatureDirectory(specDir, shortName string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to read spec directory: %w", err)
 	}
-	
+
 	for _, entry := range entries {
 		if entry.IsDir() {
 			name := entry.Name()
@@ -384,7 +390,7 @@ func findFeatureDirectory(specDir, shortName string) (string, error) {
 			}
 		}
 	}
-	
+
 	return "", fmt.Errorf("feature directory not found for %s. Run 'specware feature new-requirements %s' first", shortName, shortName)
 }
 
@@ -393,38 +399,161 @@ type FeatureStatus struct {
 	CurrentStep string `json:"current-step"`
 }
 
+// ClaudeSettings represents the structure of .claude/settings.local.json
+type ClaudeSettings struct {
+	Permissions *PermissionsConfig `json:"permissions,omitempty"`
+}
+
+// PermissionsConfig represents the permissions configuration
+type PermissionsConfig struct {
+	Allow []string `json:"allow,omitempty"`
+}
+
+// UpdateClaudeSettings updates .claude/settings.local.json to allow specware commands
+func UpdateClaudeSettings(targetDir string, autoYes bool) error {
+	settingsPath := filepath.Join(targetDir, ".claude", "settings.local.json")
+	specwareAllowEntry := SpecwareAllowlistEntry
+
+	// Check if settings file exists
+	_, err := os.Stat(settingsPath)
+	if os.IsNotExist(err) {
+		fmt.Printf("Claude Code settings file not found at %s\n", settingsPath)
+		fmt.Println("This is normal if you haven't configured Claude Code personal settings yet.")
+		fmt.Println("You can manually add permissions later if needed.")
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to check settings file: %w", err)
+	}
+
+	// Prompt user for permission to update settings (unless autoYes is true)
+	if !autoYes {
+		fmt.Println("\nWould you like to update Claude Code project permissions to allow specware")
+		fmt.Println("commands without prompting? This will add the following to your")
+		fmt.Printf("personal settings file (%s):\n", settingsPath)
+		fmt.Printf("  \"allow\": [\"%s\"]\n", specwareAllowEntry)
+		fmt.Print("\nUpdate permissions? (y/N): ")
+
+		scanner := bufio.NewScanner(os.Stdin)
+		if !scanner.Scan() {
+			if err := scanner.Err(); err != nil {
+				return fmt.Errorf("failed to read user input: %w", err)
+			}
+			// EOF reached (user pressed Ctrl+D or similar)
+			fmt.Println("\nSkipping Claude Code permissions update.")
+			return nil
+		}
+		response := strings.TrimSpace(strings.ToLower(scanner.Text()))
+
+		if response != "y" && response != "yes" {
+			fmt.Println("Skipping Claude Code permissions update.")
+			return nil
+		}
+	}
+
+	// Read existing settings into a map to preserve unknown fields
+	settingsData, err := os.ReadFile(settingsPath)
+	if err != nil {
+		return fmt.Errorf("failed to read settings file: %w", err)
+	}
+
+	var rawSettings map[string]interface{}
+	if err := json.Unmarshal(settingsData, &rawSettings); err != nil {
+		fmt.Printf("Warning: Settings file appears to be malformed JSON. Skipping update.\n")
+		fmt.Printf("You can manually add \"%s\" to the allow list if needed.\n", specwareAllowEntry)
+		return nil
+	}
+
+	// Initialize rawSettings if nil
+	if rawSettings == nil {
+		rawSettings = make(map[string]interface{})
+	}
+
+	// Get or create permissions object
+	var permissions map[string]interface{}
+	if permissionsRaw, exists := rawSettings["permissions"]; exists && permissionsRaw != nil {
+		if permissionsMap, ok := permissionsRaw.(map[string]interface{}); ok {
+			permissions = permissionsMap
+		} else {
+			permissions = make(map[string]interface{})
+		}
+	} else {
+		permissions = make(map[string]interface{})
+		rawSettings["permissions"] = permissions
+	}
+
+	// Get or create allow list
+	var allowList []string
+	if allowRaw, exists := permissions["allow"]; exists && allowRaw != nil {
+		if allowSlice, ok := allowRaw.([]interface{}); ok {
+			allowList = make([]string, len(allowSlice))
+			for i, v := range allowSlice {
+				if str, ok := v.(string); ok {
+					allowList[i] = str
+				}
+			}
+		}
+	}
+
+	// Check if specware entry already exists
+	for _, entry := range allowList {
+		if entry == specwareAllowEntry {
+			fmt.Printf("Specware permissions already configured in %s\n", settingsPath)
+			return nil
+		}
+	}
+
+	// Add specware entry to allow list
+	allowList = append(allowList, specwareAllowEntry)
+	permissions["allow"] = allowList
+
+	// Write updated settings back to file
+	updatedData, err := json.MarshalIndent(rawSettings, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal updated settings: %w", err)
+	}
+
+	if err := os.WriteFile(settingsPath, updatedData, 0644); err != nil {
+		return fmt.Errorf("failed to write updated settings: %w", err)
+	}
+
+	fmt.Printf("Successfully updated Claude Code permissions in %s\n", settingsPath)
+	fmt.Printf("Added: \"%s\"\n", specwareAllowEntry)
+
+	return nil
+}
 
 // UpdateFeatureStatus updates the status of a feature specification
 func UpdateFeatureStatus(targetDir, shortName, status string) error {
 	if err := ValidateFeatureName(shortName); err != nil {
 		return err
 	}
-	
+
 	specDir := filepath.Join(targetDir, ".spec")
 	if _, err := os.Stat(specDir); os.IsNotExist(err) {
 		return fmt.Errorf(".spec directory not found. Run 'specware init' first")
 	}
-	
+
 	// Find the feature directory
 	featureDir, err := findFeatureDirectory(specDir, shortName)
 	if err != nil {
 		return err
 	}
-	
+
 	// Update status file
 	statusPath := filepath.Join(featureDir, ".spec-status.json")
 	statusData := FeatureStatus{
 		CurrentStep: status,
 	}
-	
+
 	jsonData, err := json.MarshalIndent(statusData, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal status data: %w", err)
 	}
-	
+
 	if err := os.WriteFile(statusPath, jsonData, 0644); err != nil {
 		return fmt.Errorf("failed to write status file: %w", err)
 	}
-	
+
 	return nil
 }
