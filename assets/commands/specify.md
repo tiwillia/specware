@@ -42,8 +42,8 @@ Guide the user through generating a requirements specification.
   - Questions about similar features users currently use
   - Questions about data/content being worked with
   - Write all questions to `context-requirements.md` with smart defaults
-  - Ask questions one at a time proposing the question with a smart default option
-- Only after all questions are asked, record answers in `context-requirements.md` as received, not before.
+  - Use the AskUserQuestion tool to ask ALL questions at once with smart default options
+- Record answers in `context-requirements.md` as received.
 
 #### Step 3: Context Gathering
 - Use `specware feature update-state <short-name> "Requirements Context Gathering"`
@@ -61,7 +61,7 @@ Guide the user through generating a requirements specification.
   - Questions about access control
   - Questions about performance or scale expectations
   - These questions should clarify expected behavior with a deep understanding of the code.
-  - Ask questions one at a time proposing the question with a smart default option
+  - Use the AskUserQuestion tool to ask ALL questions at once with smart default options
 
 #### Step 5: Finalize Requirements
 - Generate comprehensive requirements based on the template in `requirements.md`. Do not delete or modify existing sections, honor the template.
@@ -111,7 +111,7 @@ Technical specifications, such as OpenAPI, CLI reference, API output, Diagrams, 
 
 #### Step 3: Interactive Review
 - Generate the most important 1-2 questions that would provide additional clarification needed for the specification.
-  - Ask questions one at a time proposing the question with a smart default option
+  - Use the AskUserQuestion tool to ask ALL questions at once with smart default options
 - Display the technical specification without modification to the user, then ask questions.
 - Consider the answers and update the specification as needed.
 - Display the technical specification without modification to the user again
@@ -151,8 +151,8 @@ When the user is ready for implementation planning:
   - Questions about performance and security concerns
   - Questions about testing requirements
   - Write all questions to `context-implementation-plan.md` with smart defaults and example code snippets where necessary
-  - Ask questions one at a time proposing the question with a smart default option and examples
-- Only after all questions are asked, record answers in `context-implementation-plan.md` as received, not before.
+  - Use the AskUserQuestion tool to ask ALL questions at once with smart default options and examples
+- Record answers in `context-implementation-plan.md` as received.
 
 #### Step 4: Testing Q&A
 - Review what testing exists for similar features and determine what unit, integration, and e2e tests may be necessary for this feature.
@@ -162,8 +162,8 @@ When the user is ready for implementation planning:
   - Questions about when to write which tests (Test Driven Development for example)
   - Questions about how to run specific tests if required and unclear
   - Write all questions to `context-implementation-plan.md` with smart defaults and example code snippets where necessary
-  - Ask questions one at a time proposing the question with a smart default option and examples
-- Only after all questions are asked, record answers in `context-implementation-plan.md` as received, not before.
+  - Use the AskUserQuestion tool to ask ALL questions at once with smart default options and examples
+- Record answers in `context-implementation-plan.md` as received.
 
 #### Step 5: Finalize Implementation Plan
 - Generate a comprehensive implementation plan, breaking out large operations and changes into smaller tasks
@@ -223,7 +223,7 @@ When the user is ready for implementation planning:
 
 ### Q&A Rules
 - ONLY yes/no questions with smart defaults
-- ONE question at a time
+- Use the AskUserQuestion tool to ask ALL questions at once
 - Write ALL questions to file BEFORE asking any
 - Stay focused on requirements during requirements gathering, exclude implementation details
 - Document WHY each default makes sense
