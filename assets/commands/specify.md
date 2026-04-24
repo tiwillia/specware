@@ -18,7 +18,7 @@ If the config file doesn't exist or can't be read, use the default values shown 
 ### Pre: Assess Input
 
 $ARGUMENTS should be either:
-1. Feature requirements, indiciating a new feature specification should be started
+1. Feature requirements, indicating a new feature specification should be started
 2. Feedback on requirements or implementation plans, indicating that finalization step is likely in progress and review is occurring asynchronously.
 3. A short name, indicating the user wants to pick up where they left off in this workflow for the feature with the given short name.
 
@@ -70,7 +70,7 @@ Guide the user through generating a requirements specification.
 - Offer three options:
   1. Interactive review session of the requirements documentation
   2. Stop here for asynchronous review and feedback, the user being expected to review the requirements document.
-  3. Move to the next phase, skipping review (not reccomended).
+  3. Move to the next phase, skipping review (not recommended).
 
 #### Step 6: (optional) Interactive review session
 - Use `specware feature update-state <short-name> "Requirements Interactive Review"`
@@ -232,7 +232,7 @@ When the user is ready for implementation planning:
 ### Specware usage Guidance
 The specware tool is necessary to facilitate the basic operations of the workflow.
 
-If the specware tool is not avaialble, immediately stop and instruct the user to install the tool.
+If the specware tool is not available, immediately stop and instruct the user to install the tool.
 
 **Feature Management**
   specware feature new-requirements <short-name>         # Add requirements to feature (creates dir if not exist)
